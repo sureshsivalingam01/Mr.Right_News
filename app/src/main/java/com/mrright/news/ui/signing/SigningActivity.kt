@@ -6,12 +6,14 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.mrright.news.databinding.ActivityLoggingBinding
+import com.mrright.news.databinding.ActivitySigningBinding
+import com.mrright.news.ui.main.MainActivity
+import com.mrright.news.utils.*
 import com.mrright.news.utils.constants.SIGN
-import com.mrright.news.utils.shortToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
@@ -19,7 +21,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SigningActivity : AppCompatActivity() {
 
-    private lateinit var bind: ActivityLoggingBinding
+    private lateinit var bind: ActivitySigningBinding
 
     private lateinit var googleSignIn: ActivityResultLauncher<Intent>
     private lateinit var googleSignUp: ActivityResultLauncher<Intent>
@@ -31,7 +33,7 @@ class SigningActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bind = ActivityLoggingBinding.inflate(layoutInflater)
+        bind = ActivitySigningBinding.inflate(layoutInflater)
         setContentView(bind.root)
 
         activityResult()
@@ -44,15 +46,35 @@ class SigningActivity : AppCompatActivity() {
     }
 
     private fun collectAuthState() {
-        lifecycleScope.launchWhenCreated {
-            viewModel.authSigningFlow.collect {
-                when (it) {
-                    is SigningViewModel.SigningState.Loading -> shortToast(it.msg)
-                    is SigningViewModel.SigningState.Error -> shortToast(it.msg)
-                    is SigningViewModel.SigningState.SignedIn -> shortToast(it.name)
-                    is SigningViewModel.SigningState.SignedUp -> shortToast(it.name)
-                    else -> Unit
+        viewModel.authSigning.observe(this@SigningActivity) {
+            when (it) {
+                is SigningViewModel.SigningState.Loading -> {
+                    with(bind) {
+                        if (cardLoading.isVisible) {
+                            txtMsg.text = it.msg
+                        } else {
+                            cardLoading.visible()
+                            txtMsg.text = it.msg
+                        }
+                    }
                 }
+                is SigningViewModel.SigningState.Error -> {
+                    bind.cardLoading.inVisible()
+                    shortToast(it.msg)
+                }
+                is SigningViewModel.SigningState.SignedIn -> {
+                    bind.cardLoading.inVisible()
+                    shortToast(it.name)
+                    openActivity(MainActivity::class.java)
+                    finish()
+                }
+                is SigningViewModel.SigningState.SignedUp -> {
+                    bind.cardLoading.inVisible()
+                    shortToast(it.name)
+                    openActivity(MainActivity::class.java)
+                    finish()
+                }
+                else -> Unit
             }
         }
     }

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mrright.news.db.api.Resource
 import com.mrright.news.db.api.repositories.NewsRepository
+import com.mrright.news.db.api.responses.NewsDTO
 import com.mrright.news.models.News
 import com.mrright.news.ui.states.NetworkState
 import com.mrright.news.ui.states.UIState
@@ -23,32 +24,49 @@ class SearchViewModel @Inject constructor(
 
     val uiState = MutableStateFlow<UIState>(UIState.Init)
 
-    private val breakingNewsPage = 1
+    var queryNewsPage = 1
+    var listSize = 0
+    private var query: String? = "Corona"
 
-    private val _news = MutableLiveData<NetworkState<News>>(NetworkState.Nothing)
+    private var queryNewsResponse: NewsDTO? = null
+
+    private val _news = MutableLiveData<NetworkState<News>>(NetworkState.None)
     val news: LiveData<NetworkState<News>> get() = _news
 
+    fun searchParticular() {
 
-    fun searchParticular(query: String = "Corona") {
-        viewModelScope.launch(Dispatchers.Main) {
+        query?.let {
+            viewModelScope.launch(Dispatchers.Main) {
 
-            _news.value = NetworkState.Loading()
-            val result = withContext(Dispatchers.IO) {
-                newsRepository.searchParticular(query, breakingNewsPage)
-            }
-            when (result) {
-                is Resource.Error -> {
-                    result.msg?.let {
-                        _news.value = NetworkState.Error(it)
-                    }
+                _news.value = NetworkState.Loading()
+                val result = withContext(Dispatchers.IO) {
+                    newsRepository.searchQuery(it, queryNewsPage)
                 }
-                is Resource.Exception -> {
-                    result.ex?.message?.let {
-                        _news.value = NetworkState.Error(it)
+                when (result) {
+                    is Resource.Error -> {
+                        _news.value = NetworkState.Error(result.msg)
                     }
-                }
-                is Resource.Success -> {
-                    _news.value = NetworkState.Success(result.value.toNews())
+                    is Resource.Exception -> {
+                        _news.value = NetworkState.Error(result.ex.message ?: "UnKnown Error")
+                    }
+                    is Resource.Success -> {
+                        queryNewsPage++
+                        if (queryNewsResponse == null) {
+                            queryNewsResponse = result.value
+                        } else {
+                            val oldArticles = queryNewsResponse?.articles
+                            val newArticles = result.value.articles
+                            newArticles?.let {
+                                oldArticles?.addAll(it)
+                            }
+                        }
+
+                        listSize = result.value.totalResults!!
+                        _news.value =
+                            NetworkState.Success(
+                                queryNewsResponse?.toNews() ?: result.value.toNews()
+                            )
+                    }
                 }
             }
         }
@@ -56,6 +74,10 @@ class SearchViewModel @Inject constructor(
 
     fun changeUIState(uiState: UIState) {
         this.uiState.value = uiState
+    }
+
+    fun setQ(query: String?) {
+        this.query = query
     }
 
 }

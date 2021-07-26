@@ -5,34 +5,39 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import com.mrright.news.databinding.FragmentProfileBinding
+import com.mrright.news.utils.glide
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
 
-    private lateinit var profileViewModel: ProfileViewModel
     private var _bind: FragmentProfileBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val bind get() = _bind!!
+
+    private val viewModel: ProfileViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        profileViewModel =
-            ViewModelProvider(this).get(ProfileViewModel::class.java)
-
         _bind = FragmentProfileBinding.inflate(inflater, container, false)
 
-        profileViewModel.text.observe(viewLifecycleOwner, {
-            bind.txtProfile.text = it
-        })
+        collectUserDetails()
+
         return bind.root
+    }
+
+    private fun collectUserDetails() {
+        viewModel.userDetails.observe(viewLifecycleOwner) {
+            with(bind) {
+                imgProfile.glide(it.profilePicUrl)
+                txtName.text = it.name
+                txtEmail.text = it.email
+            }
+        }
     }
 
     override fun onDestroyView() {

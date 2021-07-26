@@ -23,6 +23,8 @@ object GoogleModule {
     ): GoogleSignInOptions {
         return GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).apply {
             requestIdToken(context.getString(R.string.default_web_client_id))
+            requestEmail()
+            requestProfile()
         }.build()
     }
 

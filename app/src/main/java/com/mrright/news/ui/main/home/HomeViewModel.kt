@@ -25,9 +25,10 @@ class HomeViewModel @Inject constructor(
     val uiState = MutableStateFlow<UIState>(UIState.Init)
 
     var breakingNewsPage = 1
+    var listSize = 0
     private var breakingNewsResponse: NewsDTO? = null
 
-    private val _news = MutableLiveData<NetworkState<News>>(NetworkState.Nothing)
+    private val _news = MutableLiveData<NetworkState<News>>(NetworkState.None)
     val news: LiveData<NetworkState<News>> get() = _news
 
     fun getTopHeadlines() {
@@ -39,14 +40,10 @@ class HomeViewModel @Inject constructor(
             }
             when (result) {
                 is Resource.Error -> {
-                    result.msg?.let {
-                        _news.value = NetworkState.Error(it)
-                    }
+                    _news.value = NetworkState.Error(result.msg)
                 }
                 is Resource.Exception -> {
-                    result.ex?.message?.let {
-                        _news.value = NetworkState.Error(it)
-                    }
+                    _news.value = NetworkState.Error(result.ex.message ?: "Unknown Error")
                 }
                 is Resource.Success -> {
                     breakingNewsPage++
@@ -59,6 +56,8 @@ class HomeViewModel @Inject constructor(
                             oldArticles?.addAll(it)
                         }
                     }
+
+                    listSize = result.value.totalResults!!
                     _news.value =
                         NetworkState.Success(
                             breakingNewsResponse?.toNews() ?: result.value.toNews()

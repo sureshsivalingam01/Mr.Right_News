@@ -1,22 +1,27 @@
 package com.mrright.news.ui.signing
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.mrright.news.db.api.Resource
 import com.mrright.news.db.firestore.repositories.AuthRepository
 import com.mrright.news.db.firestore.repositories.UserRepository
 import com.mrright.news.models.User
 import com.mrright.news.utils.constants.SIGN
+import com.mrright.news.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,25 +32,30 @@ class SigningViewModel @Inject constructor(
 
     val signingUIState = MutableStateFlow<SigningUIState>(SigningUIState.None)
 
-    private val _authSigningFlow: MutableStateFlow<SigningState> =
-        MutableStateFlow(SigningState.Nothing)
+    private val _authSigning: MutableLiveData<SigningState> =
+        MutableLiveData(SigningState.None)
 
-    val authSigningFlow: StateFlow<SigningState> get() = _authSigningFlow
+    val authSigning: LiveData<SigningState> get() = _authSigning
 
     fun googleSigning(task: Task<GoogleSignInAccount>, sign: SIGN) {
 
-        viewModelScope.launch(Dispatchers.IO) {
-            _authSigningFlow.value = SigningState.Loading()
+        viewModelScope.launch(Dispatchers.Main) {
+            _authSigning.value = SigningState.Loading("Getting Token Details")
+            delay(2000L)
 
-            when (val result = authRepository.getTokenId(task)) {
-                is Resource.Error -> _authSigningFlow.value = SigningState.Error(result.msg)
+            val result = withContext(IO) {
+                authRepository.getTokenId(task)
+            }
+
+            when (result) {
+                is Resource.Error -> _authSigning.value = SigningState.Error(result.msg)
                 is Resource.Exception -> {
                     result.ex.message?.let {
-                        _authSigningFlow.value =
-                            SigningState.Error(result.ex.message!!)
+                        _authSigning.value = SigningState.Error(it)
                     }
                 }
                 is Resource.Success -> {
+                    infoLog("SSS ${result.value.idToken}")
                     getAccount(GoogleAuthProvider.getCredential(result.value.idToken, null), sign)
                 }
             }
@@ -55,41 +65,59 @@ class SigningViewModel @Inject constructor(
 
     private suspend fun getAccount(credential: AuthCredential, sign: SIGN) {
 
-        when (val result = authRepository.signIn(credential)) {
-            is Resource.Error -> _authSigningFlow.value = SigningState.Error(result.msg)
+        _authSigning.value = SigningState.Loading("Getting Account Details")
+        delay(2000L)
+
+        val result = withContext(IO) {
+            authRepository.signIn(credential)
+        }
+
+        when (result) {
+            is Resource.Error -> _authSigning.value = SigningState.Error(result.msg)
             is Resource.Exception -> {
                 result.ex.message?.let {
-                    _authSigningFlow.value =
-                        SigningState.Error(result.ex.message!!)
+                    _authSigning.value = SigningState.Error(it)
                 }
             }
-            is Resource.Success -> createUser(result.value, sign)
+            is Resource.Success -> {
+
+                if (sign == SIGN.IN) {
+                    _authSigning.value = SigningState.SignedIn(result.value.user?.displayName!!)
+                } else {
+                    createUser(result.value.user!!)
+                }
+
+            }
         }
 
     }
 
-    private suspend fun createUser(authResult: AuthResult, sign: SIGN) {
+    private suspend fun createUser(firebaseUser: FirebaseUser) {
+
+        _authSigning.value = SigningState.Loading("Creating User")
+        delay(2000L)
 
         val user = User(
-            authResult.user?.uid!!,
-            authResult.user?.email!!,
-            authResult.user?.displayName!!,
+            firebaseUser.uid,
+            firebaseUser.email ?: "",
+            firebaseUser.displayName ?: "",
+            firebaseUser.providerData[0].phoneNumber ?: "",
+            firebaseUser.providerData[0].photoUrl.toString(),
         )
 
-        when (val result = userRepository.createUser(user)) {
-            is Resource.Error -> _authSigningFlow.value = SigningState.Error(result.msg)
+        val result = withContext(IO) {
+            userRepository.createUser(user)
+        }
+
+        when (result) {
+            is Resource.Error -> _authSigning.value = SigningState.Error(result.msg)
             is Resource.Exception -> {
                 result.ex.message?.let {
-                    _authSigningFlow.value =
-                        SigningState.Error(result.ex.message!!)
+                    _authSigning.value = SigningState.Error(it)
                 }
             }
             is Resource.Success -> {
-                _authSigningFlow.value = if (sign == SIGN.IN) {
-                    SigningState.SignedIn(user.name)
-                } else {
-                    SigningState.SignedUp(user.name)
-                }
+                _authSigning.value = SigningState.SignedUp(user.name)
             }
         }
 
@@ -110,7 +138,7 @@ class SigningViewModel @Inject constructor(
         data class SignedUp(val name: String) : SigningState()
         data class Error(val msg: String = "Unknown Error") : SigningState()
         data class Loading(val msg: String = "Loading") : SigningState()
-        object Nothing : SigningState()
+        object None : SigningState()
     }
 
 }

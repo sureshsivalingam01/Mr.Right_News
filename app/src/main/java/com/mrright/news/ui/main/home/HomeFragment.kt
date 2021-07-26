@@ -24,6 +24,9 @@ import kotlinx.coroutines.flow.collect
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
+    private var _bind: FragmentHomeBinding? = null
+    private val bind get() = _bind!!
+
     private var isLoading = false
     private var isLastPage = false
     private var isScrolling = false
@@ -53,18 +56,18 @@ class HomeFragment : Fragment() {
 
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             super.onScrollStateChanged(recyclerView, newState)
-            if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-                isScrolling = true
+            if (articlesAdapter.currentList.size < homeViewModel.listSize) {
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                    isScrolling = true
+                }
             }
+
         }
     }
 
-    private var _bind: FragmentHomeBinding? = null
-    private val bind get() = _bind!!
+    private lateinit var articlesAdapter: ArticlesAdapter
 
     private val homeViewModel: HomeViewModel by activityViewModels()
-
-    private lateinit var articlesAdapter: ArticlesAdapter
 
     override fun onStart() {
         super.onStart()

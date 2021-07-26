@@ -31,7 +31,7 @@ class NewsRepoImpl @Inject constructor(
         }
     }
 
-    override suspend fun searchParticular(query: String, pageNo: Int): Resource<NewsDTO> {
+    override suspend fun searchQuery(query: String, pageNo: Int): Resource<NewsDTO> {
         return try {
             val result = newsService.searchParticular(query, pageNo, apiKey)
             return if (result.isSuccessful && result.body() != null) {
@@ -56,7 +56,7 @@ interface NewsRepository {
         pageNo: Int,
     ): Resource<NewsDTO>
 
-    suspend fun searchParticular(
+    suspend fun searchQuery(
         query: String,
         pageNo: Int,
     ): Resource<NewsDTO>
