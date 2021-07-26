@@ -1,10 +1,11 @@
 package com.mrright.news.di
 
+
 import com.mrright.news.BuildConfig
 import com.mrright.news.db.api.NewsService
-import com.mrright.news.utils.CONNECT_TIMEOUT
-import com.mrright.news.utils.READ_TIMEOUT
-import com.mrright.news.utils.WRITE_TIMEOUT
+import com.mrright.news.utils.constants.CONNECT_TIMEOUT
+import com.mrright.news.utils.constants.READ_TIMEOUT
+import com.mrright.news.utils.constants.WRITE_TIMEOUT
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -16,7 +16,7 @@ import com.mrright.news.databinding.FragmentHomeBinding
 import com.mrright.news.ui.adapters.ArticlesAdapter
 import com.mrright.news.ui.states.NetworkState
 import com.mrright.news.ui.states.UIState
-import com.mrright.news.utils.QUERY_PAGE_SIZE
+import com.mrright.news.utils.constants.QUERY_PAGE_SIZE
 import com.mrright.news.utils.shortToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -106,7 +106,7 @@ class HomeFragment : Fragment() {
                 when (it) {
                     UIState.Init -> {
                         homeViewModel.getTopHeadlines()
-                        homeViewModel.changeUIState(UIState.Non)
+                        homeViewModel.changeUIState(UIState.None)
                     }
                     else -> Unit
                 }

@@ -38,7 +38,7 @@ class SearchViewModel @Inject constructor(
             }
             when (result) {
                 is Resource.Error -> {
-                    result.message?.let {
+                    result.msg?.let {
                         _news.value = NetworkState.Error(it)
                     }
                 }

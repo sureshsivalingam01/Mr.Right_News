@@ -1,4 +1,4 @@
-package com.mrright.news.utils
+package com.mrright.news.utils.constants
 
 const val CONNECT_TIMEOUT = 15000L
 const val READ_TIMEOUT = 20000L

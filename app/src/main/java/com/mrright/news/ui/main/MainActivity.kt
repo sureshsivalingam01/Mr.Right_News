@@ -25,29 +25,32 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
 
-            when (destination.id) {
-                R.id.navigation_home -> {
-                    bind.topAppBar.title = "Home"
-                    bind.btmNav.visible()
-                    bind.topAppBar.navigationIcon = null
+            with(bind) {
+                when (destination.id) {
+                    R.id.navigation_home -> {
+                        topAppBar.title = "Home"
+                        btmNav.visible()
+                        topAppBar.navigationIcon = null
+                    }
+                    R.id.navigation_search -> {
+                        topAppBar.title = "Search"
+                        btmNav.visible()
+                        topAppBar.navigationIcon = null
+                    }
+                    R.id.navigation_profile -> {
+                        topAppBar.title = "Profile"
+                        btmNav.visible()
+                        topAppBar.navigationIcon = null
+                    }
+                    R.id.articleFragment -> {
+                        topAppBar.title = "Article"
+                        btmNav.gone()
+                        topAppBar.setNavigationIcon(R.drawable.ic_home_black_24dp)
+                    }
+                    else -> Unit
                 }
-                R.id.navigation_search -> {
-                    bind.topAppBar.title = "Search"
-                    bind.btmNav.visible()
-                    bind.topAppBar.navigationIcon = null
-                }
-                R.id.navigation_profile -> {
-                    bind.topAppBar.title = "Profile"
-                    bind.btmNav.visible()
-                    bind.topAppBar.navigationIcon = null
-                }
-                R.id.articleFragment -> {
-                    bind.topAppBar.title = "Article"
-                    bind.btmNav.gone()
-                    bind.topAppBar.setNavigationIcon(R.drawable.ic_home_black_24dp)
-                }
-                else -> Unit
             }
+
         }
 
         bind.topAppBar.setNavigationOnClickListener {

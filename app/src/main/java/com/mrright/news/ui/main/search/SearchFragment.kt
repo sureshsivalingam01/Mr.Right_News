@@ -66,7 +66,7 @@ class SearchFragment : Fragment() {
                 when (it) {
                     UIState.Init -> {
                         searchViewModel.searchParticular()
-                        searchViewModel.changeUIState(UIState.Non)
+                        searchViewModel.changeUIState(UIState.None)
                     }
                     else -> Unit
                 }
