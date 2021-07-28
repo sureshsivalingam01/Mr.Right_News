@@ -5,7 +5,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.mrright.news.db.api.Resource
+import com.mrright.news.db.Resource
 import com.mrright.news.utils.errorLog
 import com.mrright.news.utils.infoLog
 import kotlinx.coroutines.tasks.await
@@ -23,7 +23,7 @@ class AuthRepoImpl @Inject constructor(
             return Resource.Success(result)
         } catch (e: Exception) {
             errorLog("getTokenId | Exception", e)
-            Resource.Exception(e)
+            Resource.Failure(e)
         }
     }
 
@@ -31,13 +31,16 @@ class AuthRepoImpl @Inject constructor(
         return try {
             val result = auth.signInWithCredential(credential)
                 .await()
-            result?.let {
+
+            if (result != null) {
                 infoLog("signIn | Success | ${result.user}")
                 Resource.Success(result)
-            } ?: Resource.Error("No Response")
+            } else {
+                throw Exception("Error While Signing In")
+            }
         } catch (e: Exception) {
             errorLog("signIn | Exception", e)
-            Resource.Exception(e)
+            Resource.Failure(e)
         }
     }
 }

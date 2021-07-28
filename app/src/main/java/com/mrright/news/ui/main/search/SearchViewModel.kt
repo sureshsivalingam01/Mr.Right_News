@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mrright.news.db.api.Resource
+import com.mrright.news.db.Resource
 import com.mrright.news.db.api.repositories.NewsRepository
 import com.mrright.news.db.api.responses.NewsDTO
 import com.mrright.news.models.News
-import com.mrright.news.ui.states.NetworkState
+import com.mrright.news.ui.states.NetworkEvent
 import com.mrright.news.ui.states.UIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -30,24 +30,22 @@ class SearchViewModel @Inject constructor(
 
     private var queryNewsResponse: NewsDTO? = null
 
-    private val _news = MutableLiveData<NetworkState<News>>(NetworkState.None)
-    val news: LiveData<NetworkState<News>> get() = _news
+    private val _news = MutableLiveData<NetworkEvent<News>>(NetworkEvent.None)
+    val news: LiveData<NetworkEvent<News>> get() = _news
 
     fun searchParticular() {
 
         query?.let {
             viewModelScope.launch(Dispatchers.Main) {
 
-                _news.value = NetworkState.Loading()
+                _news.value = NetworkEvent.Loading()
+
                 val result = withContext(Dispatchers.IO) {
                     newsRepository.searchQuery(it, queryNewsPage)
                 }
                 when (result) {
-                    is Resource.Error -> {
-                        _news.value = NetworkState.Error(result.msg)
-                    }
-                    is Resource.Exception -> {
-                        _news.value = NetworkState.Error(result.ex.message ?: "UnKnown Error")
+                    is Resource.Failure -> {
+                        _news.value = NetworkEvent.Error(result.ex.message ?: "UnKnown Error")
                     }
                     is Resource.Success -> {
                         queryNewsPage++
@@ -63,7 +61,7 @@ class SearchViewModel @Inject constructor(
 
                         listSize = result.value.totalResults!!
                         _news.value =
-                            NetworkState.Success(
+                            NetworkEvent.Success(
                                 queryNewsResponse?.toNews() ?: result.value.toNews()
                             )
                     }

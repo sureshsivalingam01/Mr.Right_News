@@ -1,7 +1,7 @@
 package com.mrright.news.db.api.repositories
 
 import com.mrright.news.db.api.NewsService
-import com.mrright.news.db.api.Resource
+import com.mrright.news.db.Resource
 import com.mrright.news.db.api.responses.NewsDTO
 import com.mrright.news.di.ApiKey
 import com.mrright.news.utils.errorLog
@@ -18,32 +18,32 @@ class NewsRepoImpl @Inject constructor(
     override suspend fun getTopHeadlines(pageNo: Int): Resource<NewsDTO> {
         return try {
             val result = newsService.getTopHeadlines(pageNo, apiKey)
-            return if (result.isSuccessful && result.body() != null) {
+            if (result.isSuccessful && result.body() != null) {
                 infoLog("getTopHeadlines | Success | ${result.body()}")
                 Resource.Success(result.body()!!)
             } else {
                 errorLog("getTopHeadlines | Error | ${result.errorBody()}")
-                Resource.Error(result.errorBody().toString())
+                throw Exception("No News Articles")
             }
         } catch (e: Exception) {
             errorLog("getTopHeadlines | Exception | ${e.message}")
-            Resource.Exception(e)
+            Resource.Failure(e)
         }
     }
 
     override suspend fun searchQuery(query: String, pageNo: Int): Resource<NewsDTO> {
         return try {
             val result = newsService.searchParticular(query, pageNo, apiKey)
-            return if (result.isSuccessful && result.body() != null) {
+            if (result.isSuccessful && result.body() != null) {
                 infoLog("searchParticular | Success | ${result.body()}")
                 Resource.Success(result.body()!!)
             } else {
                 errorLog("searchParticular | Error | ${result.errorBody()}")
-                Resource.Error(result.errorBody().toString())
+                throw Exception("No News Articles")
             }
         } catch (e: Exception) {
             errorLog("searchParticular | Exception | ${e.message}")
-            Resource.Exception(e)
+            Resource.Failure(e)
         }
     }
 

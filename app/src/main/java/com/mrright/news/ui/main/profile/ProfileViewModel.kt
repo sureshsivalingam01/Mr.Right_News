@@ -1,14 +1,17 @@
 package com.mrright.news.ui.main.profile
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import com.mrright.news.db.api.Resource
+import com.mrright.news.db.Resource
 import com.mrright.news.db.firestore.repositories.UserRepository
 import com.mrright.news.models.User
+import com.mrright.news.utils.constants.Menu
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,10 +21,13 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val firebaseAuth: FirebaseAuth,
+    @ApplicationContext context: Context,
 ) : ViewModel() {
 
-    private val _userDetails: MutableLiveData<User> = MutableLiveData(User())
-    val userDetails: LiveData<User> get() = _userDetails
+    private val _userDetails: MutableLiveData<UserState> = MutableLiveData(UserState.None)
+    val userDetails: LiveData<UserState> get() = _userDetails
+
+    val profileMenus = Menu.values().toList()
 
     init {
         getUserDetails()
@@ -35,13 +41,22 @@ class ProfileViewModel @Inject constructor(
             }
 
             when (result) {
-                is Resource.Error -> TODO()
-                is Resource.Exception -> TODO()
-                is Resource.Success -> _userDetails.value = result.value
+                is Resource.Failure -> _userDetails.value = UserState.Error
+                is Resource.Success -> _userDetails.value = UserState.Success(result.value.toUser())
             }
 
         }
     }
 
+    fun signOut() {
+        firebaseAuth.signOut()
+    }
 
+
+}
+
+sealed class UserState {
+    data class Success(val user: User) : UserState()
+    object Error : UserState()
+    object None : UserState()
 }

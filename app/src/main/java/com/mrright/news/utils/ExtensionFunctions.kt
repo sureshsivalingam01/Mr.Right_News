@@ -9,8 +9,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 
@@ -87,7 +89,7 @@ fun View.gone() {
     this.visibility = View.GONE
 }
 
-fun ImageView.glide(url: String?, @DrawableRes placeholder: Int? = null) {
+fun ImageView.glideUrl(url: String?, @DrawableRes placeholder: Int? = null) {
     if (placeholder == null) {
         Glide.with(this.context).load(url)
             .into(this)
@@ -95,6 +97,14 @@ fun ImageView.glide(url: String?, @DrawableRes placeholder: Int? = null) {
         Glide.with(this.context).load(url).placeholder(placeholder)
             .into(this)
     }
+}
+
+fun ImageView.glideDrawableRes(@DrawableRes id: Int? = null) {
+    Glide.with(this.context).load(id).into(this)
+}
+
+fun TextView.setStringRes(@StringRes id: Int) {
+    this.text = this.context.getString(id)
 }
 
 

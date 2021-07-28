@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mrright.news.R
 import com.mrright.news.databinding.FragmentHomeBinding
 import com.mrright.news.ui.adapters.ArticlesAdapter
-import com.mrright.news.ui.states.NetworkState
+import com.mrright.news.ui.states.NetworkEvent
 import com.mrright.news.ui.states.UIState
 import com.mrright.news.utils.constants.QUERY_PAGE_SIZE
 import com.mrright.news.utils.shortToast
@@ -120,15 +120,15 @@ class HomeFragment : Fragment() {
     private fun collectNews() {
         homeViewModel.news.observe(viewLifecycleOwner) {
             when (it) {
-                is NetworkState.Loading -> {
+                is NetworkEvent.Loading -> {
                     isLoading = true
                     shortToast(it.msg)
                 }
-                is NetworkState.Error -> {
+                is NetworkEvent.Error -> {
                     isLoading = false
                     shortToast(it.msg)
                 }
-                is NetworkState.Success -> {
+                is NetworkEvent.Success -> {
                     isLoading = false
                     val t = it.value.totalResults
                     articlesAdapter.submitList(it.value.articles)

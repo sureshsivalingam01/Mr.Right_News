@@ -9,7 +9,8 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.mrright.news.db.api.Resource
+import com.mrright.news.db.Resource
+import com.mrright.news.db.ResourceNone
 import com.mrright.news.db.firestore.repositories.AuthRepository
 import com.mrright.news.db.firestore.repositories.UserRepository
 import com.mrright.news.models.User
@@ -48,8 +49,7 @@ class SigningViewModel @Inject constructor(
             }
 
             when (result) {
-                is Resource.Error -> _authSigning.value = SigningState.Error(result.msg)
-                is Resource.Exception -> {
+                is Resource.Failure -> {
                     result.ex.message?.let {
                         _authSigning.value = SigningState.Error(it)
                     }
@@ -73,8 +73,7 @@ class SigningViewModel @Inject constructor(
         }
 
         when (result) {
-            is Resource.Error -> _authSigning.value = SigningState.Error(result.msg)
-            is Resource.Exception -> {
+            is Resource.Failure -> {
                 result.ex.message?.let {
                     _authSigning.value = SigningState.Error(it)
                 }
@@ -106,17 +105,16 @@ class SigningViewModel @Inject constructor(
         )
 
         val result = withContext(IO) {
-            userRepository.createUser(user)
+            userRepository.createUser(user.toUserDTO())
         }
 
         when (result) {
-            is Resource.Error -> _authSigning.value = SigningState.Error(result.msg)
-            is Resource.Exception -> {
+            is ResourceNone.Failure -> {
                 result.ex.message?.let {
                     _authSigning.value = SigningState.Error(it)
                 }
             }
-            is Resource.Success -> {
+            is ResourceNone.Success -> {
                 _authSigning.value = SigningState.SignedUp(user.name)
             }
         }

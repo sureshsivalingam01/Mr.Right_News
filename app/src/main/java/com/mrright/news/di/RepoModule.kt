@@ -12,16 +12,18 @@ import com.mrright.news.db.firestore.repositories.UserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 object RepoModule {
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideNewsRepo(
         @ApiKey apiKey: String,
         newsService: NewsService,
@@ -30,13 +32,13 @@ object RepoModule {
     }
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideAuthRepo(
         auth: FirebaseAuth
     ): AuthRepository = AuthRepoImpl(auth)
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideUserRepo(
         @UserCollection userCollection: CollectionReference
     ): UserRepository = UserRepoImpl(userCollection)

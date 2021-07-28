@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.mrright.news.utils.glide
+import com.mrright.news.utils.glideUrl
 import com.mrright.news.R
 import com.mrright.news.databinding.RvArticleBinding
 import com.mrright.news.models.Article
@@ -24,7 +24,7 @@ class ArticlesAdapter(
 
         with(holder.bind) {
             txtTitle.text = article.title
-            imgArticle.glide(article.urlToImage, R.drawable.ic_launcher_background)
+            imgArticle.glideUrl(article.urlToImage, R.drawable.ic_launcher_background)
         }
     }
 

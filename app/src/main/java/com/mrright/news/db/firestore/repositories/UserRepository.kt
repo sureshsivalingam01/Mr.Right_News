@@ -1,9 +1,10 @@
 package com.mrright.news.db.firestore.repositories
 
 import com.google.firebase.firestore.CollectionReference
-import com.mrright.news.db.api.Resource
+import com.mrright.news.db.Resource
+import com.mrright.news.db.ResourceNone
+import com.mrright.news.db.firestore.dto.UserDTO
 import com.mrright.news.di.UserCollection
-import com.mrright.news.models.User
 import com.mrright.news.utils.errorLog
 import com.mrright.news.utils.infoLog
 import kotlinx.coroutines.tasks.await
@@ -15,38 +16,38 @@ class UserRepoImpl @Inject constructor(
 ) : UserRepository {
 
     override suspend fun createUser(
-        user: User,
-    ): Resource<String> {
+        user: UserDTO,
+    ): ResourceNone {
         return try {
             val result = userCollection.document(user.email)
                 .set(user)
                 .await()
             infoLog("createUser | Success | $result")
-            Resource.Success("Success")
+            ResourceNone.Success
         } catch (e: Exception) {
             errorLog("createUser | Exception", e)
-            Resource.Exception(e)
+            ResourceNone.Failure(e)
         }
     }
 
     override suspend fun getUser(
         documentId: String,
-    ): Resource<User> {
+    ): Resource<UserDTO> {
 
         return try {
             val result = userCollection.document(documentId)
                 .get()
-                .await()
+                .await().toObject(UserDTO::class.java)
 
-            result?.toObject(User::class.java)
-                ?.let {
-                    infoLog("getAccountDetails | Success | $it")
-                    Resource.Success(it)
-                } ?: Resource.Error("No Response")
-
+            if (result != null) {
+                infoLog("getAccountDetails | Success | $result")
+                Resource.Success(result)
+            } else {
+                throw Exception("No User Found")
+            }
         } catch (e: Exception) {
             errorLog("getAccountDetails | Exception", e)
-            Resource.Exception(e)
+            Resource.Failure(e)
         }
     }
 
@@ -55,8 +56,8 @@ class UserRepoImpl @Inject constructor(
 
 interface UserRepository {
 
-    suspend fun createUser(user: User): Resource<String>
+    suspend fun createUser(user: UserDTO): ResourceNone
 
-    suspend fun getUser(documentId: String): Resource<User>
+    suspend fun getUser(documentId: String): Resource<UserDTO>
 
 }
