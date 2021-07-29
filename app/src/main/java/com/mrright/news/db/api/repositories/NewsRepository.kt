@@ -4,8 +4,8 @@ import com.mrright.news.db.api.NewsService
 import com.mrright.news.db.Resource
 import com.mrright.news.db.api.responses.NewsDTO
 import com.mrright.news.di.ApiKey
-import com.mrright.news.utils.errorLog
-import com.mrright.news.utils.infoLog
+import com.mrright.news.utils.helpers.errorLog
+import com.mrright.news.utils.helpers.infoLog
 import javax.inject.Inject
 
 

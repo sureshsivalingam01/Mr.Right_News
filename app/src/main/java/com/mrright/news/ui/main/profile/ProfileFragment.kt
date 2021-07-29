@@ -11,10 +11,10 @@ import com.mrright.news.databinding.FragmentProfileBinding
 import com.mrright.news.ui.adapters.MenuAdapter
 import com.mrright.news.ui.signing.SigningActivity
 import com.mrright.news.utils.constants.Menu
-import com.mrright.news.utils.glideUrl
-import com.mrright.news.utils.inVisible
-import com.mrright.news.utils.openActivity
-import com.mrright.news.utils.visible
+import com.mrright.news.utils.helpers.glideUrl
+import com.mrright.news.utils.helpers.inVisible
+import com.mrright.news.utils.helpers.openActivity
+import com.mrright.news.utils.helpers.visible
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

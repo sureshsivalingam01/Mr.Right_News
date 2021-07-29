@@ -18,7 +18,7 @@ import com.mrright.news.ui.adapters.ArticlesAdapter
 import com.mrright.news.ui.states.NetworkEvent
 import com.mrright.news.ui.states.UIState
 import com.mrright.news.utils.constants.QUERY_PAGE_SIZE
-import com.mrright.news.utils.shortToast
+import com.mrright.news.utils.helpers.shortToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 

@@ -5,10 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.mrright.news.utils.glideUrl
 import com.mrright.news.R
 import com.mrright.news.databinding.RvArticleBinding
 import com.mrright.news.models.Article
+import com.mrright.news.utils.helpers.glideUrl
 
 class ArticlesAdapter(
     private val onClick: (article: Article) -> Unit = {}

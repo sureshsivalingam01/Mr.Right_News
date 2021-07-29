@@ -1,6 +1,5 @@
 package com.mrright.news.ui.main.profile
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,7 +10,6 @@ import com.mrright.news.db.firestore.repositories.UserRepository
 import com.mrright.news.models.User
 import com.mrright.news.utils.constants.Menu
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -21,7 +19,6 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val firebaseAuth: FirebaseAuth,
-    @ApplicationContext context: Context,
 ) : ViewModel() {
 
     private val _userDetails: MutableLiveData<UserState> = MutableLiveData(UserState.None)
@@ -37,7 +34,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Main) {
 
             val result = withContext(Dispatchers.IO) {
-                userRepository.getUser(firebaseAuth.currentUser?.email!!)
+                userRepository.getUser(firebaseAuth.currentUser?.uid!!)
             }
 
             when (result) {

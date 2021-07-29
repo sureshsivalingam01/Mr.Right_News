@@ -5,22 +5,17 @@ import com.google.firebase.firestore.CollectionReference
 import com.mrright.news.db.api.NewsService
 import com.mrright.news.db.api.repositories.NewsRepoImpl
 import com.mrright.news.db.api.repositories.NewsRepository
-import com.mrright.news.db.firestore.repositories.AuthRepoImpl
-import com.mrright.news.db.firestore.repositories.AuthRepository
-import com.mrright.news.db.firestore.repositories.UserRepoImpl
-import com.mrright.news.db.firestore.repositories.UserRepository
+import com.mrright.news.db.firestore.repositories.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 
 @Module
 @InstallIn(ViewModelComponent::class)
-object RepoModule {
+object RepositoryModule {
 
     @Provides
     @ViewModelScoped
@@ -34,14 +29,20 @@ object RepoModule {
     @Provides
     @ViewModelScoped
     fun provideAuthRepo(
-        auth: FirebaseAuth
+        auth: FirebaseAuth,
     ): AuthRepository = AuthRepoImpl(auth)
 
     @Provides
     @ViewModelScoped
     fun provideUserRepo(
-        @UserCollection userCollection: CollectionReference
+        @UserCollection userCollection: CollectionReference,
     ): UserRepository = UserRepoImpl(userCollection)
 
+    @Provides
+    @ViewModelScoped
+    fun provideArticleRepo(
+        auth: FirebaseAuth,
+        @UserCollection userCollection: CollectionReference,
+    ): ArticleRepository = ArticleRepoImpl(auth, userCollection)
 
 }

@@ -8,8 +8,8 @@ import com.mrright.news.databinding.ActivitySplashBinding
 import com.mrright.news.ui.signing.SigningActivity
 import com.mrright.news.ui.main.MainActivity
 import com.mrright.news.ui.states.UIState
-import com.mrright.news.utils.openActivity
-import com.mrright.news.utils.shortToast
+import com.mrright.news.utils.helpers.openActivity
+import com.mrright.news.utils.helpers.shortToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 

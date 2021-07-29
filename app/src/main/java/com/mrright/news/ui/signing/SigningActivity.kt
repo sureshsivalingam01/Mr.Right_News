@@ -14,6 +14,10 @@ import com.mrright.news.databinding.ActivitySigningBinding
 import com.mrright.news.ui.main.MainActivity
 import com.mrright.news.utils.*
 import com.mrright.news.utils.constants.SIGN
+import com.mrright.news.utils.helpers.inVisible
+import com.mrright.news.utils.helpers.openActivity
+import com.mrright.news.utils.helpers.shortToast
+import com.mrright.news.utils.helpers.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject

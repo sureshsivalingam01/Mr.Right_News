@@ -6,8 +6,8 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.mrright.news.db.Resource
-import com.mrright.news.utils.errorLog
-import com.mrright.news.utils.infoLog
+import com.mrright.news.utils.helpers.errorLog
+import com.mrright.news.utils.helpers.infoLog
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 

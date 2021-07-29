@@ -66,19 +66,3 @@ object RetrofitModule {
     ): NewsService = retrofit.create(NewsService::class.java)
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -6,8 +6,8 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.mrright.news.R
 import com.mrright.news.databinding.ActivityMainBinding
-import com.mrright.news.utils.gone
-import com.mrright.news.utils.visible
+import com.mrright.news.utils.helpers.gone
+import com.mrright.news.utils.helpers.visible
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -54,7 +54,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         bind.topAppBar.setNavigationOnClickListener {
-            onBackPressed()
+            //onBackPressed()
+            navController.popBackStack()
         }
 
     }

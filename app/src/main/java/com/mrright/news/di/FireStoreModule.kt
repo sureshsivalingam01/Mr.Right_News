@@ -17,7 +17,7 @@ object FireStoreModule {
     @Singleton
     @UserCollection
     fun provideUserCollection(
-        fireStore: FirebaseFirestore
+        fireStore: FirebaseFirestore,
     ) = fireStore.collection(Collection.USERS)
 
 

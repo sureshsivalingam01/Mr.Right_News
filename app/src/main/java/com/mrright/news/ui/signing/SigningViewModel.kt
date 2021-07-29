@@ -10,12 +10,12 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.mrright.news.db.Resource
-import com.mrright.news.db.ResourceNone
+import com.mrright.news.db.FSource
 import com.mrright.news.db.firestore.repositories.AuthRepository
 import com.mrright.news.db.firestore.repositories.UserRepository
 import com.mrright.news.models.User
 import com.mrright.news.utils.constants.SIGN
-import com.mrright.news.utils.infoLog
+import com.mrright.news.utils.helpers.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
@@ -109,12 +109,12 @@ class SigningViewModel @Inject constructor(
         }
 
         when (result) {
-            is ResourceNone.Failure -> {
+            is FSource.Failure -> {
                 result.ex.message?.let {
                     _authSigning.value = SigningState.Error(it)
                 }
             }
-            is ResourceNone.Success -> {
+            is FSource.Success -> {
                 _authSigning.value = SigningState.SignedUp(user.name)
             }
         }

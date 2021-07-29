@@ -5,7 +5,12 @@ sealed class Resource<out T> {
     data class Failure(val ex: Throwable) : Resource<Nothing>()
 }
 
-sealed class ResourceNone {
-    object Success : ResourceNone()
-    data class Failure(val ex: Throwable) : ResourceNone()
+sealed class FSource {
+    object Success : FSource()
+    data class Failure(val ex: Throwable) : FSource()
+}
+
+enum class Source {
+    SUCCESS,
+    FAILURE,
 }

@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mrright.news.databinding.RvProfileMenusBinding
 import com.mrright.news.utils.constants.Menu
-import com.mrright.news.utils.glideDrawableRes
-import com.mrright.news.utils.setStringRes
+import com.mrright.news.utils.helpers.glideDrawableRes
+import com.mrright.news.utils.helpers.setStringRes
 
 
 class MenuAdapter(

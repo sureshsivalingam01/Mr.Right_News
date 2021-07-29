@@ -4,10 +4,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.mrright.news.ui.states.MessageEvent
 import com.mrright.news.ui.states.UIState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,6 +21,9 @@ class SplashViewModel @Inject constructor(
     val isUserLoggedIn: MutableLiveData<UserState> = MutableLiveData(UserState.None)
     private val currentUser: MutableLiveData<FirebaseUser> = MutableLiveData(null)
 
+    private val msgChannel = Channel<MessageEvent>()
+    val msgFlow = msgChannel.receiveAsFlow()
+
     val uiState = MutableStateFlow<UIState>(UIState.Init)
 
     init {
@@ -26,7 +32,6 @@ class SplashViewModel @Inject constructor(
     }
 
     suspend fun checkUser() {
-        isUserLoggedIn.value = UserState.Loading()
         uiState.value = UIState.None
         delay(2000L)
         currentUser.value?.email?.let {
