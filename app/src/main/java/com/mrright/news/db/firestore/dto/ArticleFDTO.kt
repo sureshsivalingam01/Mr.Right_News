@@ -1,6 +1,8 @@
 package com.mrright.news.db.firestore.dto
 
+import com.mrright.news.models.Article
 import com.mrright.news.models.Source
+
 
 data class ArticleFDTO(
     val id: String = "",
@@ -11,4 +13,8 @@ data class ArticleFDTO(
     val title: String? = "",
     val url: String? = "",
     val urlToImage: String? = "",
-)
+) {
+    fun toArticle(): Article {
+        return Article(author, content, description, publishedAt, Source(), title, url, urlToImage)
+    }
+}

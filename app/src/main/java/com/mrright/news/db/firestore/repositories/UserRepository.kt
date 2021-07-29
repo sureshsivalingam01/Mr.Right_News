@@ -2,7 +2,7 @@ package com.mrright.news.db.firestore.repositories
 
 import com.google.firebase.firestore.CollectionReference
 import com.mrright.news.db.Resource
-import com.mrright.news.db.FSource
+import com.mrright.news.db.Source
 import com.mrright.news.db.firestore.dto.UserDTO
 import com.mrright.news.di.UserCollection
 import com.mrright.news.utils.helpers.errorLog
@@ -17,16 +17,16 @@ class UserRepoImpl @Inject constructor(
 
     override suspend fun createUser(
         user: UserDTO,
-    ): FSource {
+    ): Source {
         return try {
             val result = userCollection.document(user.uid)
                 .set(user)
                 .await()
             infoLog("createUser | Success | $result")
-            FSource.Success
+            Source.Success
         } catch (e: Exception) {
             errorLog("createUser | Exception", e)
-            FSource.Failure(e)
+            Source.Failure(e)
         }
     }
 
@@ -56,7 +56,7 @@ class UserRepoImpl @Inject constructor(
 
 interface UserRepository {
 
-    suspend fun createUser(user: UserDTO): FSource
+    suspend fun createUser(user: UserDTO): Source
 
     suspend fun getUser(uid: String): Resource<UserDTO>
 

@@ -64,6 +64,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-functions-ktx'
     implementation 'com.google.firebase:firebase-messaging-ktx'
 
+    implementation 'com.firebaseui:firebase-ui-firestore:7.2.0'
+
     // Also declare the dependency for the Google Play services library and specify its version
     implementation "com.google.android.gms:play-services-auth:19.2.0"
 
@@ -156,6 +158,8 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutines_version"
+
+
 
     //Glide
     def glide_version = "4.9.0"

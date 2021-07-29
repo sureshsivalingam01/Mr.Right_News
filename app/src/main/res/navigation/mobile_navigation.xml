@@ -56,5 +56,9 @@
         android:id="@+id/likedArticleFragment"
         android:name="com.mrright.news.ui.main.liked_articles.LikedArticleFragment"
         android:label="liked_article_fragment"
-        tools:layout="@layout/liked_article_fragment" />
+        tools:layout="@layout/liked_article_fragment" >
+        <action
+            android:id="@+id/action_likedArticleFragment_to_articleFragment"
+            app:destination="@id/articleFragment" />
+    </fragment>
 </navigation>

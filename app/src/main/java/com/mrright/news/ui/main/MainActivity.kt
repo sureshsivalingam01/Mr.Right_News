@@ -47,6 +47,16 @@ class MainActivity : AppCompatActivity() {
                         btmNav.gone()
                         topAppBar.setNavigationIcon(R.drawable.ic_home_black_24dp)
                     }
+                    R.id.likedArticleFragment -> {
+                        topAppBar.title = "Liked Articles"
+                        btmNav.gone()
+                        topAppBar.setNavigationIcon(R.drawable.ic_home_black_24dp)
+                    }
+                    R.id.editProfileFragment -> {
+                        topAppBar.title = "Edit Profile"
+                        btmNav.gone()
+                        topAppBar.setNavigationIcon(R.drawable.ic_home_black_24dp)
+                    }
                     else -> Unit
                 }
             }

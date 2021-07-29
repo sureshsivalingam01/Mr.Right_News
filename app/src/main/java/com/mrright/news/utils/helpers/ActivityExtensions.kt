@@ -1,6 +1,8 @@
 package com.mrright.news.utils.helpers
 
 import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
 import android.widget.Toast
 
 
@@ -16,4 +18,14 @@ fun Activity.longToast(
 ) {
     Toast.makeText(applicationContext, text, Toast.LENGTH_LONG)
         .show()
+}
+
+inline fun <T> Activity.openActivity(
+    activity: Class<T>,
+    extras: Bundle.() -> Unit = {},
+) {
+    Intent(applicationContext, activity).apply {
+        putExtras(Bundle().apply(extras))
+        startActivity(this)
+    }
 }

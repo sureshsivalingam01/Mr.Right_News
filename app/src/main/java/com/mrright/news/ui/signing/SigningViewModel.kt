@@ -10,7 +10,7 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.mrright.news.db.Resource
-import com.mrright.news.db.FSource
+import com.mrright.news.db.Source
 import com.mrright.news.db.firestore.repositories.AuthRepository
 import com.mrright.news.db.firestore.repositories.UserRepository
 import com.mrright.news.models.User
@@ -109,12 +109,12 @@ class SigningViewModel @Inject constructor(
         }
 
         when (result) {
-            is FSource.Failure -> {
+            is Source.Failure -> {
                 result.ex.message?.let {
                     _authSigning.value = SigningState.Error(it)
                 }
             }
-            is FSource.Success -> {
+            is Source.Success -> {
                 _authSigning.value = SigningState.SignedUp(user.name)
             }
         }

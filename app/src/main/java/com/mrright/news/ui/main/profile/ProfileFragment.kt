@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mrright.news.R
 import com.mrright.news.databinding.FragmentProfileBinding
 import com.mrright.news.ui.adapters.MenuAdapter
 import com.mrright.news.ui.signing.SigningActivity
@@ -43,11 +45,15 @@ class ProfileFragment : Fragment() {
     private fun initRV() {
         menuAdapter = MenuAdapter(viewModel.profileMenus) {
             when (it) {
-                Menu.LIKED_ARTICLE -> TODO()
-                Menu.EDIT_PROFILE -> TODO()
+                Menu.LIKED_ARTICLE -> {
+                    findNavController().navigate(R.id.action_navigation_profile_to_likedArticleFragment)
+                }
+                Menu.EDIT_PROFILE -> {
+                    findNavController().navigate(R.id.action_navigation_profile_to_editProfileFragment)
+                }
                 Menu.SIGNOUT -> {
                     viewModel.signOut()
-                    requireContext().openActivity(SigningActivity::class.java)
+                    openActivity(SigningActivity::class.java)
                     requireActivity().finish()
                 }
             }

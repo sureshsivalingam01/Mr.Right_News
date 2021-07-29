@@ -12,6 +12,7 @@ import androidx.navigation.fragment.navArgs
 import com.mrright.news.R
 import com.mrright.news.databinding.ArticleFragmentBinding
 import com.mrright.news.ui.states.MessageEvent
+import com.mrright.news.ui.states.UIState
 import com.mrright.news.utils.helpers.shortToast
 import com.mrright.news.utils.helpers.visible
 import kotlinx.coroutines.flow.collect
@@ -35,11 +36,22 @@ class ArticleFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getArgs()
         btnCLicks()
+        collectUI()
         collectUrl()
         collectIfLiked()
         collectMsg()
+    }
+
+    private fun collectUI() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.uiState.collect {
+                when (it) {
+                    UIState.Init -> getArgs()
+                    UIState.None -> Unit
+                }
+            }
+        }
     }
 
     private fun collectMsg() {
@@ -47,7 +59,7 @@ class ArticleFragment : Fragment() {
             viewModel.msgFlow.collect {
                 when (it) {
                     is MessageEvent.SnackBar -> Unit
-                    is MessageEvent.Toast -> shortToast(it.msg)
+                    is MessageEvent.Toast -> shortToast(it.msg?:"")
                 }
             }
         }
