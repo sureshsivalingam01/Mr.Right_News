@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mrright.news.R
 import com.mrright.news.databinding.FragmentSearchBinding
 import com.mrright.news.ui.adapters.ArticlesAdapter
-import com.mrright.news.ui.states.NetworkEvent
+import com.mrright.news.ui.states.QueryState
 import com.mrright.news.ui.states.UIState
 import com.mrright.news.utils.constants.QUERY_PAGE_SIZE
 import com.mrright.news.utils.helpers.shortToast
@@ -48,7 +48,7 @@ class SearchFragment : Fragment() {
             val shouldPaginate = isNotLoadingAndNotLastPage && isAtLastItem && isNotAtBeginning &&
                     isTotalMoreThanVisible && isScrolling
             if (shouldPaginate) {
-                searchViewModel.searchParticular()
+                viewModel.searchParticular()
                 isScrolling = false
             } else {
                 bind.rvArticles.setPadding(0, 0, 0, 0)
@@ -57,7 +57,7 @@ class SearchFragment : Fragment() {
 
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             super.onScrollStateChanged(recyclerView, newState)
-            if (articlesAdapter.currentList.size < searchViewModel.listSize) {
+            if (articlesAdapter.currentList.size < viewModel.listSize) {
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     isScrolling = true
                 }
@@ -68,7 +68,7 @@ class SearchFragment : Fragment() {
 
     private lateinit var articlesAdapter: ArticlesAdapter
 
-    private val searchViewModel: SearchViewModel by activityViewModels()
+    private val viewModel: SearchViewModel by activityViewModels()
 
 
     override fun onStart() {
@@ -103,11 +103,11 @@ class SearchFragment : Fragment() {
 
     private fun collectUIState() {
         lifecycleScope.launchWhenStarted {
-            searchViewModel.uiState.collect {
+            viewModel.uiState.collect {
                 when (it) {
                     UIState.Init -> {
-                        searchViewModel.searchParticular()
-                        searchViewModel.changeUIState(UIState.None)
+                        viewModel.searchParticular(QueryState.Search("Angelina Jolie"))
+                        viewModel.changeUIState(UIState.None)
                     }
                     else -> Unit
                 }
@@ -121,10 +121,11 @@ class SearchFragment : Fragment() {
         collectNews()
 
         bind.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
             override fun onQueryTextSubmit(query: String?): Boolean {
-                searchViewModel.setQ(query)
+                //searchViewModel.setQ(query)
                 query?.let {
-                    searchViewModel.searchParticular()
+                    viewModel.searchParticular(QueryState.Search(it))
                 }
                 return true
             }
@@ -137,23 +138,28 @@ class SearchFragment : Fragment() {
     }
 
     private fun collectNews() {
-        searchViewModel.news.observe(viewLifecycleOwner) {
+        viewModel.news.observe(viewLifecycleOwner) {
             when (it) {
-                is NetworkEvent.Loading -> {
+                is SearchState.Loading -> {
                     isLoading = true
                     shortToast(it.msg)
                 }
-                is NetworkEvent.Error -> {
+                is SearchState.Error -> {
                     isLoading = false
                     shortToast(it.msg)
                 }
-                is NetworkEvent.Success -> {
+                is SearchState.Paginated -> {
                     isLoading = false
-                    val t = it.value.totalResults
                     articlesAdapter.submitList(it.value.articles)
-                    articlesAdapter.notifyDataSetChanged()
-                    val totalPages = t?.div(QUERY_PAGE_SIZE + 2)
-                    isLastPage = searchViewModel.queryNewsPage == totalPages
+                    val totalPages = it.value.totalResults?.div(QUERY_PAGE_SIZE + 2)
+                    isLastPage = viewModel.queryNewsPage == totalPages
+                }
+                is SearchState.Searched -> {
+                    isLoading = false
+                    articlesAdapter.submitList(emptyList())
+                    articlesAdapter.submitList(it.value.articles)
+                    val totalPages = it.value.totalResults?.div(QUERY_PAGE_SIZE + 2)
+                    isLastPage = viewModel.queryNewsPage == totalPages
                 }
                 else -> Unit
             }

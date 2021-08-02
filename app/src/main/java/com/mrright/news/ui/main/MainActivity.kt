@@ -7,6 +7,8 @@ import androidx.navigation.ui.setupWithNavController
 import com.mrright.news.R
 import com.mrright.news.databinding.ActivityMainBinding
 import com.mrright.news.utils.helpers.gone
+import com.mrright.news.utils.helpers.inVisible
+import com.mrright.news.utils.helpers.setStringResTitle
 import com.mrright.news.utils.helpers.visible
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,34 +30,34 @@ class MainActivity : AppCompatActivity() {
             with(bind) {
                 when (destination.id) {
                     R.id.navigation_home -> {
-                        topAppBar.title = "Home"
+                        topAppBar.setStringResTitle(R.string.home)
                         btmNav.visible()
                         topAppBar.navigationIcon = null
                     }
                     R.id.navigation_search -> {
-                        topAppBar.title = "Search"
+                        topAppBar.setStringResTitle(R.string.search)
                         btmNav.visible()
                         topAppBar.navigationIcon = null
                     }
                     R.id.navigation_profile -> {
-                        topAppBar.title = "Profile"
+                        topAppBar.setStringResTitle(R.string.profile)
                         btmNav.visible()
                         topAppBar.navigationIcon = null
                     }
                     R.id.articleFragment -> {
-                        topAppBar.title = "Article"
-                        btmNav.gone()
-                        topAppBar.setNavigationIcon(R.drawable.ic_home_black_24dp)
+                        topAppBar.setStringResTitle(R.string.article)
+                        btmNav.inVisible()
+                        topAppBar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
                     }
                     R.id.likedArticleFragment -> {
-                        topAppBar.title = "Liked Articles"
-                        btmNav.gone()
-                        topAppBar.setNavigationIcon(R.drawable.ic_home_black_24dp)
+                        topAppBar.setStringResTitle(R.string.liked_articles)
+                        btmNav.inVisible()
+                        topAppBar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
                     }
                     R.id.editProfileFragment -> {
-                        topAppBar.title = "Edit Profile"
-                        btmNav.gone()
-                        topAppBar.setNavigationIcon(R.drawable.ic_home_black_24dp)
+                        topAppBar.setStringResTitle(R.string.edit_profile)
+                        btmNav.inVisible()
+                        topAppBar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
                     }
                     else -> Unit
                 }

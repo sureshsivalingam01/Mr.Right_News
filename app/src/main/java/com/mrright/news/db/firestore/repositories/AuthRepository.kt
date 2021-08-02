@@ -6,6 +6,7 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.mrright.news.db.Resource
+import com.mrright.news.utils.exceptions.SignInException
 import com.mrright.news.utils.helpers.errorLog
 import com.mrright.news.utils.helpers.infoLog
 import kotlinx.coroutines.tasks.await
@@ -36,7 +37,7 @@ class AuthRepoImpl @Inject constructor(
                 infoLog("signIn | Success | ${result.user}")
                 Resource.Success(result)
             } else {
-                throw Exception("Error While Signing In")
+                throw SignInException()
             }
         } catch (e: Exception) {
             errorLog("signIn | Exception", e)

@@ -3,6 +3,7 @@ package com.mrright.news.di
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,5 +25,9 @@ object FirebaseModule {
     @Provides
     @Singleton
     fun provideMessaging() = FirebaseMessaging.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideStorage() = FirebaseStorage.getInstance()
 
 }

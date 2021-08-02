@@ -1,7 +1,9 @@
 package com.mrright.news.ui.adapters
 
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -9,6 +11,11 @@ import com.mrright.news.R
 import com.mrright.news.databinding.RvArticleBinding
 import com.mrright.news.models.Article
 import com.mrright.news.utils.helpers.glideUrl
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.util.*
+
 
 class ArticlesAdapter(
     private val onClick: (article: Article) -> Unit = {}
@@ -19,11 +26,13 @@ class ArticlesAdapter(
         return ArticleVH(bind)
     }
 
+
     override fun onBindViewHolder(holder: ArticleVH, position: Int) {
         val article = currentList[position]
 
         with(holder.bind) {
             txtTitle.text = article.title
+            txtDate.text = article.publishedAt
             imgArticle.glideUrl(article.urlToImage, R.drawable.ic_launcher_background)
         }
     }

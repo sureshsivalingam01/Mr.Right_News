@@ -2,6 +2,7 @@ package com.mrright.news.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.storage.FirebaseStorage
 import com.mrright.news.db.api.NewsService
 import com.mrright.news.db.api.repositories.NewsRepoImpl
 import com.mrright.news.db.api.repositories.NewsRepository
@@ -35,8 +36,10 @@ object RepositoryModule {
     @Provides
     @ViewModelScoped
     fun provideUserRepo(
+        auth: FirebaseAuth,
+        storage:FirebaseStorage,
         @UserCollection userCollection: CollectionReference,
-    ): UserRepository = UserRepoImpl(userCollection)
+    ): UserRepository = UserRepoImpl(auth,storage,userCollection)
 
     @Provides
     @ViewModelScoped

@@ -8,11 +8,13 @@ import com.mrright.news.db.Resource
 import com.mrright.news.db.api.repositories.NewsRepository
 import com.mrright.news.db.api.responses.NewsDTO
 import com.mrright.news.models.News
-import com.mrright.news.ui.states.NetworkEvent
+import com.mrright.news.ui.states.QueryState
 import com.mrright.news.ui.states.UIState
+import com.mrright.news.utils.exceptions.handle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -26,44 +28,58 @@ class SearchViewModel @Inject constructor(
 
     var queryNewsPage = 1
     var listSize = 0
-    private var query: String? = "Corona"
+    var queryText = ""
+    private var breakingNewsResponse: NewsDTO? = null
 
-    private var queryNewsResponse: NewsDTO? = null
+    private val _news = MutableLiveData<SearchState>(SearchState.None)
+    val news: LiveData<SearchState> get() = _news
 
-    private val _news = MutableLiveData<NetworkEvent<News>>(NetworkEvent.None)
-    val news: LiveData<NetworkEvent<News>> get() = _news
 
-    fun searchParticular() {
+    fun searchParticular(query: QueryState = QueryState.Paginate) {
 
-        query?.let {
-            viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.Main) {
 
-                _news.value = NetworkEvent.Loading()
-
-                val result = withContext(Dispatchers.IO) {
-                    newsRepository.searchQuery(it, queryNewsPage)
+            _news.value = SearchState.Loading()
+            val result = withContext(Dispatchers.IO) {
+                if (query is QueryState.Search) {
+                    queryText = query.txt
+                    queryNewsPage = 1
+                    breakingNewsResponse = null
+                    return@withContext newsRepository.searchQuery(query.txt, queryNewsPage)
+                } else {
+                    return@withContext newsRepository.searchQuery(queryText, queryNewsPage)
                 }
-                when (result) {
+
+            }
+            result.collect {
+                when (it) {
                     is Resource.Failure -> {
-                        _news.value = NetworkEvent.Error(result.ex.message ?: "UnKnown Error")
+                        _news.value = SearchState.Error(it.ex.handle())
+
                     }
                     is Resource.Success -> {
-                        queryNewsPage++
-                        if (queryNewsResponse == null) {
-                            queryNewsResponse = result.value
-                        } else {
-                            val oldArticles = queryNewsResponse?.articles
-                            val newArticles = result.value.articles
-                            newArticles?.let {
-                                oldArticles?.addAll(it)
-                            }
+
+                        if (breakingNewsResponse == null) {
+                            breakingNewsResponse = it.value
                         }
 
-                        listSize = result.value.totalResults!!
-                        _news.value =
-                            NetworkEvent.Success(
-                                queryNewsResponse?.toNews() ?: result.value.toNews()
-                            )
+                        listSize = it.value.totalResults!!
+
+                        queryNewsPage++
+
+                        if (query is QueryState.Paginate) {
+                            _news.value =
+                                SearchState.Paginated(
+                                    breakingNewsResponse?.toNews() ?: it.value.toNews()
+                                )
+                        } else {
+                            _news.value =
+                                SearchState.Searched(
+                                    breakingNewsResponse?.toNews() ?: it.value.toNews()
+                                )
+                        }
+
+
                     }
                 }
             }
@@ -74,8 +90,12 @@ class SearchViewModel @Inject constructor(
         this.uiState.value = uiState
     }
 
-    fun setQ(query: String?) {
-        this.query = query
-    }
+}
 
+sealed class SearchState {
+    data class Searched(val value: News) : SearchState()
+    data class Paginated(val value: News) : SearchState()
+    data class Error(val msg: String = "Unknown Error") : SearchState()
+    data class Loading(val msg: String = "Loading") : SearchState()
+    object None : SearchState()
 }

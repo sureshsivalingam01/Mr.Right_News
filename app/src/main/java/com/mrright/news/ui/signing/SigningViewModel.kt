@@ -15,12 +15,13 @@ import com.mrright.news.db.firestore.repositories.AuthRepository
 import com.mrright.news.db.firestore.repositories.UserRepository
 import com.mrright.news.models.User
 import com.mrright.news.utils.constants.SIGN
-import com.mrright.news.utils.helpers.infoLog
+import com.mrright.news.utils.exceptions.handle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -38,9 +39,39 @@ class SigningViewModel @Inject constructor(
 
     val authSigning: LiveData<SigningState> get() = _authSigning
 
+
+    private suspend fun checkUserExist(account: GoogleSignInAccount, sign: SIGN) {
+        userRepository.checkUserExist(account.email!!).collect {
+            when (it) {
+                is Source.Failure -> {
+                    if (sign == SIGN.IN) {
+                        _authSigning.value = SigningState.Error(it.ex.handle())
+                    } else {
+                        signIn(
+                            GoogleAuthProvider.getCredential(account.idToken, null),
+                            sign,
+                        )
+                    }
+                }
+                is Source.Success -> {
+                    if (sign == SIGN.IN) {
+                        signIn(
+                            GoogleAuthProvider.getCredential(account.idToken, null),
+                            sign,
+                        )
+                    } else {
+                        _authSigning.value = SigningState.Error("Your account exist")
+                    }
+                }
+            }
+        }
+    }
+
+
     fun googleSigning(task: Task<GoogleSignInAccount>, sign: SIGN) {
 
         viewModelScope.launch(Dispatchers.Main) {
+
             _authSigning.value = SigningState.Loading("Getting Token Details")
             delay(2000L)
 
@@ -50,23 +81,20 @@ class SigningViewModel @Inject constructor(
 
             when (result) {
                 is Resource.Failure -> {
-                    result.ex.message?.let {
-                        _authSigning.value = SigningState.Error(it)
-                    }
+                    _authSigning.value = SigningState.Error(result.ex.handle())
                 }
                 is Resource.Success -> {
-                    infoLog("SSS ${result.value.idToken}")
-                    getAccount(GoogleAuthProvider.getCredential(result.value.idToken, null), sign)
+                    checkUserExist(result.value, sign)
                 }
             }
         }
 
     }
 
-    private suspend fun getAccount(credential: AuthCredential, sign: SIGN) {
+    private suspend fun signIn(credential: AuthCredential, sign: SIGN) {
 
         _authSigning.value = SigningState.Loading("Getting Account Details")
-        delay(2000L)
+        delay(1000L)
 
         val result = withContext(IO) {
             authRepository.signIn(credential)
@@ -74,9 +102,7 @@ class SigningViewModel @Inject constructor(
 
         when (result) {
             is Resource.Failure -> {
-                result.ex.message?.let {
-                    _authSigning.value = SigningState.Error(it)
-                }
+                _authSigning.value = SigningState.Error(result.ex.handle())
             }
             is Resource.Success -> {
 
@@ -94,7 +120,7 @@ class SigningViewModel @Inject constructor(
     private suspend fun createUser(firebaseUser: FirebaseUser) {
 
         _authSigning.value = SigningState.Loading("Creating User")
-        delay(2000L)
+        delay(1000L)
 
         val user = User(
             firebaseUser.uid,
@@ -110,9 +136,7 @@ class SigningViewModel @Inject constructor(
 
         when (result) {
             is Source.Failure -> {
-                result.ex.message?.let {
-                    _authSigning.value = SigningState.Error(it)
-                }
+                _authSigning.value = SigningState.Error(result.ex.handle())
             }
             is Source.Success -> {
                 _authSigning.value = SigningState.SignedUp(user.name)
@@ -121,9 +145,6 @@ class SigningViewModel @Inject constructor(
 
     }
 
-    fun changeSigningState(signingUIState: SigningUIState) {
-        this.signingUIState.value = signingUIState
-    }
 
     sealed class SigningUIState {
         object SignIn : SigningUIState()

@@ -1,6 +1,9 @@
 package com.mrright.news.utils.helpers
 
 import android.view.View
+import androidx.annotation.StringRes
+import androidx.appcompat.widget.Toolbar
+import com.google.android.material.snackbar.Snackbar
 
 
 fun View.visible() {
@@ -13,4 +16,16 @@ fun View.inVisible() {
 
 fun View.gone() {
     this.visibility = View.GONE
+}
+
+fun View.shortSnack(
+    text: String,
+    actionText: String? = null,
+    action: ((View) -> Unit)? = null,
+) {
+    Snackbar.make(this, text, Snackbar.LENGTH_SHORT).setAction(actionText, action).show()
+}
+
+fun Toolbar.setStringResTitle(@StringRes id: Int) {
+    this.title = this.context.getString(id)
 }

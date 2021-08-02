@@ -29,6 +29,7 @@ class ArticleFirestoreAdapter(
         with(holder.bind) {
             imgArticle.glideUrl(article.urlToImage, R.drawable.ic_launcher_background)
             txtTitle.text = article.title
+            txtDate.text = article.publishedAt
             root.setOnClickListener {
                 if (position != RecyclerView.NO_POSITION) {
                     onClick(article)

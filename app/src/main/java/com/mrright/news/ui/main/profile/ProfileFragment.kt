@@ -6,19 +6,25 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mrright.news.R
 import com.mrright.news.databinding.FragmentProfileBinding
 import com.mrright.news.ui.adapters.MenuAdapter
 import com.mrright.news.ui.signing.SigningActivity
+import com.mrright.news.ui.states.MessageEvent
 import com.mrright.news.utils.constants.Menu
-import com.mrright.news.utils.helpers.glideUrl
-import com.mrright.news.utils.helpers.inVisible
-import com.mrright.news.utils.helpers.openActivity
-import com.mrright.news.utils.helpers.visible
+import com.mrright.news.utils.helpers.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.collect
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
 
@@ -29,6 +35,7 @@ class ProfileFragment : Fragment() {
 
     private lateinit var menuAdapter: MenuAdapter
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -38,8 +45,21 @@ class ProfileFragment : Fragment() {
 
         initRV()
         collectUserDetails()
+        collectMsgEvents()
 
         return bind.root
+    }
+
+    private fun collectMsgEvents() {
+
+        lifecycleScope.launchWhenStarted {
+            viewModel.msgEvent.collect {
+                when (it) {
+                    is MessageEvent.SnackBar -> Unit
+                    is MessageEvent.Toast -> shortToast(it.msg)
+                }
+            }
+        }
     }
 
     private fun initRV() {
@@ -64,17 +84,20 @@ class ProfileFragment : Fragment() {
         }
     }
 
+
     private fun collectUserDetails() {
-        viewModel.userDetails.observe(viewLifecycleOwner) {
-            with(bind) {
-                when (it) {
-                    is UserState.None -> Unit
-                    is UserState.Error -> root.inVisible()
-                    is UserState.Success -> {
-                        imgProfile.glideUrl(it.user.profilePicUrl)
-                        txtName.text = it.user.name
-                        txtEmail.text = it.user.email
-                        bind.root.visible()
+        lifecycleScope.launchWhenStarted {
+            viewModel.userDetailsCallBack().observe(viewLifecycleOwner) {
+                with(bind) {
+                    when (it) {
+                        is UserState.None -> Unit
+                        is UserState.Error -> root.inVisible()
+                        is UserState.Success -> {
+                            imgProfile.glideUrl(it.user.profilePicUrl)
+                            txtName.text = it.user.name
+                            txtEmail.text = it.user.email
+                            bind.root.visible()
+                        }
                     }
                 }
             }

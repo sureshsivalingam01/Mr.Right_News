@@ -17,7 +17,6 @@ import com.mrright.news.databinding.LikedArticleFragmentBinding
 import com.mrright.news.db.firestore.dto.ArticleFDTO
 import com.mrright.news.ui.adapters.ArticleFirestoreAdapter
 import com.mrright.news.utils.constants.Collection
-import com.mrright.news.utils.helpers.shortToast
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -58,12 +57,10 @@ class LikedArticleFragment : Fragment() {
             .build()
 
         articleAdapter = ArticleFirestoreAdapter(options) {
-           findNavController().navigate(
-               R.id.action_likedArticleFragment_to_articleFragment,
-               Bundle().apply {
-                   putSerializable("article",it.toArticle())
-               }
-           )
+            findNavController().navigate(
+                R.id.action_likedArticleFragment_to_articleFragment,
+                Bundle().apply { putSerializable("article", it.toArticle()) },
+            )
         }
 
         bind.rvLikedArticles.apply {
@@ -76,6 +73,17 @@ class LikedArticleFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         articleAdapter.startListening()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bind.rvLikedArticles.adapter = null
+        _bind = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        articleAdapter.stopListening()
     }
 
 }

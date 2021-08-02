@@ -3,12 +3,13 @@ package com.mrright.news.ui.main.article
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mrright.news.db.Source
 import com.mrright.news.db.Resource
+import com.mrright.news.db.Source
 import com.mrright.news.db.firestore.repositories.ArticleRepository
 import com.mrright.news.models.Article
 import com.mrright.news.ui.states.MessageEvent
 import com.mrright.news.ui.states.UIState
+import com.mrright.news.utils.exceptions.handle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -83,7 +84,7 @@ class ArticleViewModel @Inject constructor(
                     likedArticle.value = ArticleFabState.UnLiked
                 }
                 is Source.Failure -> {
-                    msgChannel.send(MessageEvent.Toast(result.ex.message))
+                    msgChannel.send(MessageEvent.Toast(result.ex.handle()))
                     likedArticle.value = ArticleFabState.Liked
                 }
             }

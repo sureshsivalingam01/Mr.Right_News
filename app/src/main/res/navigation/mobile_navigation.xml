@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.mrright.news.ui.main.home.HomeFragment"
-        android:label="@string/title_home"
+        android:label="@string/home"
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_navigation_home_to_articleFragment"
@@ -18,7 +18,7 @@
     <fragment
         android:id="@+id/navigation_search"
         android:name="com.mrright.news.ui.main.search.SearchFragment"
-        android:label="@string/title_dashboard"
+        android:label="@string/search"
         tools:layout="@layout/fragment_search" >
         <action
             android:id="@+id/action_navigation_search_to_articleFragment"
@@ -28,7 +28,7 @@
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.mrright.news.ui.main.profile.ProfileFragment"
-        android:label="@string/title_notifications"
+        android:label="@string/profile"
         tools:layout="@layout/fragment_profile" >
         <action
             android:id="@+id/action_navigation_profile_to_editProfileFragment"

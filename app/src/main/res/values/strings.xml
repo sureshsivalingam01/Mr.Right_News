@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">Mr.Right News</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
 
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="profile">Profile</string>
+
+    <string name="article">Article</string>
     <string name="liked_articles">Liked Articles</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="signout">Signout</string>

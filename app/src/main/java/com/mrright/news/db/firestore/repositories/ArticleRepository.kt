@@ -2,12 +2,13 @@ package com.mrright.news.db.firestore.repositories
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
-import com.mrright.news.db.Source
 import com.mrright.news.db.Resource
+import com.mrright.news.db.Source
 import com.mrright.news.db.firestore.dto.ArticleFDTO
 import com.mrright.news.di.UserCollection
 import com.mrright.news.models.Article
 import com.mrright.news.utils.constants.Collection
+import com.mrright.news.utils.exceptions.NoLikedArticleException
 import com.mrright.news.utils.helpers.errorLog
 import com.mrright.news.utils.helpers.infoLog
 import kotlinx.coroutines.tasks.await
@@ -57,7 +58,7 @@ class ArticleRepoImpl @Inject constructor(
                     Resource.Success(article)
                 }
                 else -> {
-                    throw Exception("No Article from your liked list $articleUrl")
+                    throw NoLikedArticleException()
                 }
             }
         } catch (e: Exception) {
