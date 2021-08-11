@@ -8,17 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.mrright.news.R
 import com.mrright.news.databinding.LikedArticleFragmentBinding
-import com.mrright.news.db.firestore.dto.ArticleFDTO
 import com.mrright.news.ui.adapters.ArticleFirestoreAdapter
-import com.mrright.news.utils.constants.Collection
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -27,12 +20,9 @@ class LikedArticleFragment : Fragment() {
     private var _bind: LikedArticleFragmentBinding? = null
     private val bind get() = _bind!!
 
-    @Inject
-    lateinit var auth: FirebaseAuth
+    private lateinit var articleAdapter: ArticleFirestoreAdapter
 
     private val viewModel: LikedArticleViewModel by activityViewModels()
-
-    private lateinit var articleAdapter: ArticleFirestoreAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,23 +36,16 @@ class LikedArticleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val query: Query = FirebaseFirestore.getInstance()
-            .collection(Collection.USERS).document(auth.currentUser?.uid!!)
-            .collection(Collection.ARTICLES)
-            .orderBy("title")
-            .limit(20)
 
-        val options = FirestoreRecyclerOptions.Builder<ArticleFDTO>()
-            .setQuery(query, ArticleFDTO::class.java)
-            .build()
-
-        articleAdapter = ArticleFirestoreAdapter(options) {
+        //onItemView Click Navigates to Article Fragment
+        articleAdapter = ArticleFirestoreAdapter(viewModel.options) {
             findNavController().navigate(
                 R.id.action_likedArticleFragment_to_articleFragment,
                 Bundle().apply { putSerializable("article", it.toArticle()) },
             )
         }
 
+        //init Liked Articles RecyclerView
         bind.rvLikedArticles.apply {
             adapter = articleAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -70,19 +53,21 @@ class LikedArticleFragment : Fragment() {
 
     }
 
+
     override fun onStart() {
         super.onStart()
+        //StartListening Must for Firestore RecyclerView
         articleAdapter.startListening()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        bind.rvLikedArticles.adapter = null
         _bind = null
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        //StopListening Must for Firestore RecyclerView
         articleAdapter.stopListening()
     }
 

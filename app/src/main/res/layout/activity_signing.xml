@@ -7,76 +7,64 @@
     android:layout_height="match_parent"
     tools:context=".ui.signing.SigningActivity">
 
-    <Button
-        android:id="@+id/btnSignIn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:drawableStart="@drawable/googleg_standard_color_18"
-        android:text="Sign In"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnSignUp"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="HardcodedText" />
 
-    <Button
-        android:id="@+id/btnSignUp"
-        android:layout_width="wrap_content"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardSign"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:drawableStart="@drawable/googleg_standard_color_18"
-        android:text="Sign Up"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btnSignIn"
-        tools:ignore="HardcodedText" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardLoading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:translationZ="10dp"
-        android:visibility="gone"
-        app:cardCornerRadius="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintStart_toStartOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:paddingVertical="30dp">
 
-            <com.google.android.material.progressindicator.CircularProgressIndicator
-                android:id="@+id/progressBar"
+
+            <Button
+                android:id="@+id/btnSignIn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginBottom="24dp"
+                android:drawableStart="@drawable/googleg_standard_color_18"
+                android:text="@string/sign_in"
+                app:layout_constraintBottom_toTopOf="@+id/txt_toggle"
+                app:layout_constraintEnd_toStartOf="@+id/btnSignUp"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/txtMsg"
+
+            <Button
+                android:id="@+id/btnSignUp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="8dp"
-                android:text="Loading"
+                android:layout_marginBottom="24dp"
+                android:drawableStart="@drawable/googleg_standard_color_18"
+                android:text="@string/sign_up"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/txt_toggle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/btnSignIn"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/txt_toggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New User ! \n Register"
                 android:textAlignment="center"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/progressBar" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

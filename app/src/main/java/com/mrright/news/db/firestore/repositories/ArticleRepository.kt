@@ -20,7 +20,7 @@ class ArticleRepoImpl @Inject constructor(
 ) : ArticleRepository {
 
     private val articleCollection =
-        userCollection.document(auth.currentUser?.uid!!).collection(Collection.ARTICLES)
+        userCollection.document(auth.currentUser?.uid!!).collection(Collection.ARTICLES.value)
 
     override suspend fun addArticle(article: Article): Resource<String> {
         return try {

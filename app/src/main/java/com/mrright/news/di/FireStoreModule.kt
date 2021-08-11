@@ -18,7 +18,7 @@ object FireStoreModule {
     @UserCollection
     fun provideUserCollection(
         fireStore: FirebaseFirestore,
-    ) = fireStore.collection(Collection.USERS)
+    ) = fireStore.collection(Collection.USERS.value)
 
 
 }

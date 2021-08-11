@@ -18,7 +18,6 @@ interface NewsService {
     suspend fun searchParticular(
         @Query("q") query: String = "Corona",
         @Query("page") pageNo: Int,
-        /*@Query("country") countryCode: String = "in",*/
         @Query("apiKey") apiKey: String,
     ): Response<NewsDTO>
 
