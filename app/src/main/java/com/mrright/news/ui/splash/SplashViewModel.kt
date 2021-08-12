@@ -13,39 +13,39 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val auth: FirebaseAuth,
+	private val auth : FirebaseAuth,
 ) : ViewModel(), FirebaseAuth.AuthStateListener {
 
-    private val _isUserLoggedIn: MutableLiveData<UserState> = MutableLiveData(UserState.None)
-    val isUserLoggedIn: LiveData<UserState> get() = _isUserLoggedIn
+	private val _isUserLoggedIn : MutableLiveData<UserState> = MutableLiveData(UserState.None)
+	val isUserLoggedIn : LiveData<UserState> get() = _isUserLoggedIn
 
-    private val currentUser: MutableLiveData<FirebaseUser> = MutableLiveData(null)
+	private val currentUser : MutableLiveData<FirebaseUser> = MutableLiveData(null)
 
-    val uiState = MutableStateFlow<UIState>(UIState.Init)
+	val uiState = MutableStateFlow<UIState>(UIState.Init)
 
 
-    init {
-        currentUser.value = auth.currentUser
-        auth.addAuthStateListener(this)
-    }
+	init {
+		currentUser.value = auth.currentUser
+		auth.addAuthStateListener(this)
+	}
 
-    suspend fun checkUser() {
-        uiState.value = UIState.None
-        delay(2000L)
-        currentUser.value?.email?.let {
-            _isUserLoggedIn.value = UserState.SignedIn
-            return
-        }
-        _isUserLoggedIn.value = UserState.SignUp
-    }
+	suspend fun checkUser() {
+		uiState.value = UIState.None
+		delay(2000L)
+		currentUser.value?.email?.let {
+			_isUserLoggedIn.value = UserState.SignedIn
+			return
+		}
+		_isUserLoggedIn.value = UserState.SignUp
+	}
 
-    override fun onAuthStateChanged(firebaseAuth: FirebaseAuth) {
-        currentUser.value = firebaseAuth.currentUser
-    }
+	override fun onAuthStateChanged(firebaseAuth : FirebaseAuth) {
+		currentUser.value = firebaseAuth.currentUser
+	}
 
-    override fun onCleared() {
-        super.onCleared()
-        auth.removeAuthStateListener(this)
-    }
+	override fun onCleared() {
+		super.onCleared()
+		auth.removeAuthStateListener(this)
+	}
 
 }

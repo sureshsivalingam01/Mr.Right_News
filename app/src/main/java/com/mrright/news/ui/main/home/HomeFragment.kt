@@ -17,132 +17,141 @@ import com.mrright.news.ui.adapters.ArticlesAdapter
 import com.mrright.news.ui.states.NetworkState
 import com.mrright.news.ui.states.UIState
 import com.mrright.news.utils.constants.QUERY_PAGE_SIZE
-import com.mrright.news.utils.helpers.shortToast
+import com.mrright.news.utils.helpers.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
-    private var _bind: FragmentHomeBinding? = null
-    private val bind get() = _bind!!
+	private var _bind : FragmentHomeBinding? = null
+	private val bind get() = _bind!!
 
-    private var isLoading = false
-    private var isLastPage = false
-    private var isScrolling = false
+	private var isLoading = false
+	private var isLastPage = false
+	private var isScrolling = false
 
-    private val scrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
+	private val scrollListener = object : RecyclerView.OnScrollListener() {
+		override fun onScrolled(
+			recyclerView : RecyclerView,
+			dx : Int,
+			dy : Int,
+		) {
+			super.onScrolled(recyclerView, dx, dy)
 
-            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-            val visibleItemCount = layoutManager.childCount
-            val totalItemCount = layoutManager.itemCount
+			val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+			val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+			val visibleItemCount = layoutManager.childCount
+			val totalItemCount = layoutManager.itemCount
 
-            val isNotLoadingAndNotLastPage = !isLoading && !isLastPage
-            val isAtLastItem = firstVisibleItemPosition + visibleItemCount >= totalItemCount
-            val isNotAtBeginning = firstVisibleItemPosition >= 0
-            val isTotalMoreThanVisible = totalItemCount >= QUERY_PAGE_SIZE
-            val shouldPaginate = isNotLoadingAndNotLastPage && isAtLastItem && isNotAtBeginning &&
-                    isTotalMoreThanVisible && isScrolling
-            if (shouldPaginate) {
-                homeViewModel.getTopHeadlines()
-                isScrolling = false
-            } else {
-                bind.rvArticles.setPadding(0, 0, 0, 0)
-            }
-        }
+			val isNotLoadingAndNotLastPage = !isLoading && !isLastPage
+			val isAtLastItem = firstVisibleItemPosition + visibleItemCount >= totalItemCount
+			val isNotAtBeginning = firstVisibleItemPosition >= 0
+			val isTotalMoreThanVisible = totalItemCount >= QUERY_PAGE_SIZE
+			val shouldPaginate = isNotLoadingAndNotLastPage && isAtLastItem && isNotAtBeginning && isTotalMoreThanVisible && isScrolling
+			if (shouldPaginate) {
+				homeViewModel.getTopHeadlines()
+				isScrolling = false
+			}
+			else {
+				bind.rvArticles.setPadding(0, 0, 0, 0)
+			}
+		}
 
-        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-            super.onScrollStateChanged(recyclerView, newState)
-            if (articlesAdapter.currentList.size < homeViewModel.listSize) {
-                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-                    isScrolling = true
-                }
-            }
+		override fun onScrollStateChanged(
+			recyclerView : RecyclerView,
+			newState : Int,
+		) {
+			super.onScrollStateChanged(recyclerView, newState)
+			if (articlesAdapter.currentList.size < homeViewModel.listSize) {
+				if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+					isScrolling = true
+				}
+			}
 
-        }
-    }
+		}
+	}
 
-    private lateinit var articlesAdapter: ArticlesAdapter
+	private lateinit var articlesAdapter : ArticlesAdapter
 
-    private val homeViewModel: HomeViewModel by activityViewModels()
+	private val homeViewModel : HomeViewModel by activityViewModels()
 
-    override fun onStart() {
-        super.onStart()
-        collectUIState()
-    }
+	override fun onStart() {
+		super.onStart()
+		collectUIState()
+	}
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _bind = FragmentHomeBinding.inflate(inflater, container, false)
-        initView()
-        return bind.root
-    }
+	override fun onCreateView(
+		inflater : LayoutInflater,
+		container : ViewGroup?,
+		savedInstanceState : Bundle?,
+	) : View {
+		_bind = FragmentHomeBinding.inflate(inflater, container, false)
+		initView()
+		return bind.root
+	}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        collectNews()
-    }
+	override fun onViewCreated(
+		view : View,
+		savedInstanceState : Bundle?,
+	) {
+		super.onViewCreated(view, savedInstanceState)
+		collectNews()
+	}
 
-    private fun initView() {
-        articlesAdapter = ArticlesAdapter {
-            findNavController().navigate(
-                R.id.action_navigation_home_to_articleFragment,
-                Bundle().apply { putSerializable("article", it) },
-            )
-        }
-        bind.rvArticles.apply {
-            adapter = articlesAdapter
-            layoutManager = LinearLayoutManager(context)
-            addOnScrollListener(this@HomeFragment.scrollListener)
-        }
-    }
+	private fun initView() {
+		articlesAdapter = ArticlesAdapter {
+			findNavController().navigate(
+				R.id.action_navigation_home_to_articleFragment,
+				Bundle().apply { putSerializable("article", it) },
+			)
+		}
+		bind.rvArticles.apply {
+			adapter = articlesAdapter
+			layoutManager = LinearLayoutManager(context)
+			addOnScrollListener(this@HomeFragment.scrollListener)
+		}
+	}
 
-    private fun collectUIState() {
-        lifecycleScope.launchWhenStarted {
-            homeViewModel.uiState.collect {
-                when (it) {
-                    UIState.Init -> {
-                        homeViewModel.getTopHeadlines()
-                        homeViewModel.changeUIState(UIState.None)
-                    }
-                    else -> Unit
-                }
-            }
-        }
-    }
+	private fun collectUIState() {
+		lifecycleScope.launchWhenStarted {
+			homeViewModel.uiState.collect {
+				when (it) {
+					UIState.Init -> {
+						homeViewModel.getTopHeadlines()
+						homeViewModel.changeUIState(UIState.None)
+					}
+					else -> Unit
+				}
+			}
+		}
+	}
 
-    private fun collectNews() {
-        homeViewModel.news.observe(viewLifecycleOwner) {
-            when (it) {
-                is NetworkState.Loading -> {
-                    isLoading = true
-                    shortToast(it.msg)
-                }
-                is NetworkState.Error -> {
-                    isLoading = false
-                    shortToast(it.msg)
-                }
-                is NetworkState.Success -> {
-                    isLoading = false
-                    val t = it.value.totalResults
-                    articlesAdapter.submitList(it.value.articles)
-                    articlesAdapter.notifyDataSetChanged()
-                    val totalPages = t?.div(QUERY_PAGE_SIZE + 2)
-                    isLastPage = homeViewModel.breakingNewsPage == totalPages
-                }
-                else -> Unit
-            }
-        }
-    }
+	private fun collectNews() {
+		homeViewModel.news.observe(viewLifecycleOwner) {
+			when (it) {
+				is NetworkState.Loading -> {
+					isLoading = true
+					requireContext().toast(it.msg)
+				}
+				is NetworkState.Error -> {
+					isLoading = false
+					requireContext().toast(it.msg)
+				}
+				is NetworkState.Success -> {
+					isLoading = false
+					val t = it.value.totalResults
+					articlesAdapter.submitList(it.value.articles)
+					val totalPages = t?.div(QUERY_PAGE_SIZE + 2)
+					isLastPage = homeViewModel.breakingNewsPage == totalPages
+				}
+				else -> Unit
+			}
+		}
+	}
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _bind = null
-    }
+	override fun onDestroyView() {
+		super.onDestroyView()
+		_bind = null
+	}
 }

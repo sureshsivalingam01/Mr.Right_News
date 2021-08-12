@@ -12,17 +12,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LikedArticleViewModel @Inject constructor(
-    private val auth: FirebaseAuth
+	auth : FirebaseAuth,
 ) : ViewModel() {
 
-    private val query: Query = FirebaseFirestore.getInstance()
-        .collection(Collection.USERS.value).document(auth.currentUser?.uid!!)
-        .collection(Collection.ARTICLES.value)
-        .orderBy("title")
-        .limit(20)
+	private val query : Query = FirebaseFirestore.getInstance()
+		.collection(Collection.USERS.value)
+		.document(auth.currentUser?.uid!!)
+		.collection(Collection.ARTICLES.value)
+		.orderBy("title")
+		.limit(20)
 
-    val options = FirestoreRecyclerOptions.Builder<ArticleFDTO>()
-        .setQuery(query, ArticleFDTO::class.java)
-        .build()
+	val options = FirestoreRecyclerOptions.Builder<ArticleFDTO>()
+		.setQuery(query, ArticleFDTO::class.java)
+		.build()
 
 }

@@ -29,111 +29,112 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
-    private val auth: FirebaseAuth,
-    private val userRepository: UserRepository,
+	private val auth : FirebaseAuth,
+	private val userRepository : UserRepository,
 ) : ViewModel() {
 
-    private val _userDetails: MutableLiveData<UserState> = MutableLiveData(UserState.None)
-    val userDetails: LiveData<UserState> get() = _userDetails
+	private val _userDetails : MutableLiveData<UserState> = MutableLiveData(UserState.None)
+	val userDetails : LiveData<UserState> get() = _userDetails
 
-    private var user = User()
-    private var name = ""
-    private var mobileNo = ""
+	private var user = User()
+	private var name = ""
+	private var mobileNo = ""
 
-    private val _userUpdate: MutableStateFlow<State> = MutableStateFlow(State.NONE)
-    val userUpdate: StateFlow<State> = _userUpdate
+	private val _userUpdate : MutableStateFlow<State> = MutableStateFlow(State.NONE)
+	val userUpdate : StateFlow<State> = _userUpdate
 
-    private val _msgChannel: Channel<MessageEvent> = Channel()
-    val msgEvent = _msgChannel.receiveAsFlow()
+	private val _msgChannel : Channel<MessageEvent> = Channel()
+	val msgEvent = _msgChannel.receiveAsFlow()
 
-    private val _sameContent: MutableStateFlow<ButtonState> =
-        MutableStateFlow(ButtonState.Disabled)
+	private val _sameContent : MutableStateFlow<ButtonState> = MutableStateFlow(ButtonState.Disabled)
 
-    val sameContent: StateFlow<ButtonState> get() = _sameContent
+	val sameContent : StateFlow<ButtonState> get() = _sameContent
 
-    init {
-        getUserDetails()
-    }
+	init {
+		getUserDetails()
+	}
 
-    suspend fun updateDetails() {
+	suspend fun updateDetails() {
 
-        userRepository.updateUser(name, mobileNo).collect {
-            when (it) {
-                is Source.Failure -> {
-                    _userUpdate.value = State.FAILED
-                    _msgChannel.send(MessageEvent.Toast(it.ex.handle()))
-                }
-                is Source.Success -> {
-                    _msgChannel.send(MessageEvent.SnackBar("Updated"))
-                    delay(1500L)
-                    _userUpdate.value = State.SUCCESS
-                }
-            }
-        }
+		userRepository.updateUser(name, mobileNo)
+			.collect {
+				when (it) {
+					is Source.Failure -> {
+						_userUpdate.value = State.FAILED
+						_msgChannel.send(MessageEvent.Toast(it.ex.handle()))
+					}
+					is Source.Success -> {
+						_msgChannel.send(MessageEvent.SnackBar("Updated"))
+						delay(1500L)
+						_userUpdate.value = State.SUCCESS
+					}
+				}
+			}
 
-    }
+	}
 
-    private fun getUserDetails() {
-        viewModelScope.launch(Dispatchers.Main) {
+	private fun getUserDetails() {
+		viewModelScope.launch(Dispatchers.Main) {
 
-            val result = withContext(IO) {
-                userRepository.getUser(auth.currentUser?.uid!!)
-            }
+			val result = withContext(IO) {
+				userRepository.getUser(auth.currentUser?.uid!!)
+			}
 
-            when (result) {
-                is Resource.Failure -> _userDetails.value = UserState.Error
-                is Resource.Success -> {
-                    user = result.value.toUser()
-                    _userDetails.value = UserState.Success(result.value.toUser())
-                }
-            }
+			result.collect {
 
-        }
-    }
+				when (it) {
+					is Resource.Failure -> _userDetails.value = UserState.Error
+					is Resource.Success -> {
+						user = it.value.toUser()
+						_userDetails.value = UserState.Success(it.value.toUser())
+					}
+				}
 
-    fun setNewName(newName: String) = viewModelScope.launch {
-        name = newName
-        checkValues()
-    }
+			}
+		}
+	}
 
-    fun setMobileNo(newMobileNo: String) = viewModelScope.launch {
-        mobileNo = newMobileNo
-        checkValues()
-    }
+	fun setNewName(newName : String) = viewModelScope.launch {
+		name = newName
+		checkValues()
+	}
 
-    private fun checkValues() {
-        if (name == user.name && mobileNo == user.phoneNo) {
-            _sameContent.value = ButtonState.Disabled
-            return
-        } else if (name.isEmpty() || mobileNo.length < 10) {
-            _sameContent.value = ButtonState.Disabled
-            return
-        } else {
-            _sameContent.value = ButtonState.Enabled
-            return
-        }
-    }
+	fun setMobileNo(newMobileNo : String) = viewModelScope.launch {
+		mobileNo = newMobileNo
+		checkValues()
+	}
 
-    fun updateProfilePic(uri: Uri) {
-        viewModelScope.launch(IO) {
-            userRepository.updateProfilePic(uri).collect {
-                when (it) {
-                    State.SUCCESS -> {
-                        _msgChannel.send(MessageEvent.SnackBar("Updated"))
-                        delay(1500L)
-                        _userUpdate.value = State.SUCCESS
-                    }
-                    State.FAILED -> Unit
-                    else -> Unit
-                }
-            }
-        }
-    }
+	private fun checkValues() {
+		if (name == user.name && mobileNo == user.phoneNo) {
+			_sameContent.value = ButtonState.Disabled
+			return
+		}
+		else if (name.isEmpty() || mobileNo.length < 10) {
+			_sameContent.value = ButtonState.Disabled
+			return
+		}
+		else {
+			_sameContent.value = ButtonState.Enabled
+			return
+		}
+	}
 
-}
+	fun updateProfilePic(uri : Uri) {
+		viewModelScope.launch(IO) {
+			userRepository.updateProfilePic(uri)
+				.collect {
+					when (it) {
+						State.SUCCESS -> {
+							_msgChannel.send(MessageEvent.SnackBar("Updated"))
+							delay(1500L)
+							_userUpdate.value = State.SUCCESS
+						}
+						State.FAILED -> Unit
+						else -> Unit
+					}
+				}
+		}
+	}
 
-sealed class ButtonState {
-    object Enabled : ButtonState()
-    object Disabled : ButtonState()
 }
 

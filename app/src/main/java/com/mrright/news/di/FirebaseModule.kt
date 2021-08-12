@@ -14,20 +14,20 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object FirebaseModule {
 
-    @Provides
-    @Singleton
-    fun provideAuth() = FirebaseAuth.getInstance()
+	@Provides
+	@Singleton
+	fun provideAuth() = FirebaseAuth.getInstance()
 
-    @Provides
-    @Singleton
-    fun provideFireStore() = FirebaseFirestore.getInstance()
+	@Provides
+	@Singleton
+	fun provideFireStore() = FirebaseFirestore.getInstance()
 
-    @Provides
-    @Singleton
-    fun provideMessaging() = FirebaseMessaging.getInstance()
+	@Provides
+	@Singleton
+	fun provideMessaging() = FirebaseMessaging.getInstance()
 
-    @Provides
-    @Singleton
-    fun provideStorage() = FirebaseStorage.getInstance()
+	@Provides
+	@Singleton
+	fun provideStorage() = FirebaseStorage.getInstance()
 
 }

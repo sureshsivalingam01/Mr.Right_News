@@ -13,10 +13,13 @@
     <string name="loading">Loading</string>
     <string name="account_exist">Your Account already Registered \n Please SignIn</string>
     <string name="getting_details">Getting Details</string>
-    <string name="welcome_signed_in">Welcome Back \n %1$s </string>
-    <string name="welcome_signed_up">Welcome to Mr.Right News \n %1$s </string>
+    <string name="welcome_signed_in">Welcome Back\n %1$s </string>
+    <string name="welcome_signed_up">Welcome to Mr.Right News\n %1$s </string>
     <string name="creating_user">Creating User</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
+
+    <string name="new_user_register">New User !\n Please Register</string>
+    <string name="old_user_sign_in">Already Registered !\n Please Sign In</string>
 
 </resources>

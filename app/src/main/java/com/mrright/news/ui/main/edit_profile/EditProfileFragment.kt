@@ -18,7 +18,7 @@ import com.mrright.news.ui.states.MessageEvent
 import com.mrright.news.utils.constants.State
 import com.mrright.news.utils.helpers.glideUrl
 import com.mrright.news.utils.helpers.shortSnack
-import com.mrright.news.utils.helpers.shortToast
+import com.mrright.news.utils.helpers.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -27,123 +27,127 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class EditProfileFragment : Fragment() {
 
-    private var _bind: EditProfileFragmentBinding? = null
-    private val bind get() = _bind!!
+	private var _bind : EditProfileFragmentBinding? = null
+	private val bind get() = _bind!!
 
-    private val viewModel: EditProfileViewModel by viewModels()
+	private val viewModel : EditProfileViewModel by viewModels()
 
-    private lateinit var getContent: ActivityResultLauncher<String>
+	private lateinit var getContent : ActivityResultLauncher<String>
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _bind = EditProfileFragmentBinding.inflate(inflater, container, false)
-        collectUserDetails()
-        collectButtonState()
-        return bind.root
-    }
+	override fun onCreateView(
+		inflater : LayoutInflater,
+		container : ViewGroup?,
+		savedInstanceState : Bundle?,
+	) : View {
+		_bind = EditProfileFragmentBinding.inflate(inflater, container, false)
+		collectUserDetails()
+		collectButtonState()
+		return bind.root
+	}
 
-    private fun collectButtonState() {
-        lifecycleScope.launchWhenStarted {
-            viewModel.sameContent.collect {
-                when (it) {
-                    ButtonState.Disabled -> bind.btnUpdate.isEnabled = false
-                    ButtonState.Enabled -> bind.btnUpdate.isEnabled = true
-                }
-            }
-        }
-    }
+	private fun collectButtonState() {
+		lifecycleScope.launchWhenStarted {
+			viewModel.sameContent.collect {
+				when (it) {
+					ButtonState.Disabled -> bind.btnUpdate.isEnabled = false
+					ButtonState.Enabled -> bind.btnUpdate.isEnabled = true
+				}
+			}
+		}
+	}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(
+		view : View,
+		savedInstanceState : Bundle?,
+	) {
+		super.onViewCreated(view, savedInstanceState)
 
-        btnClicks()
-        collectUserUpdate()
-        collectMsgs()
-        registerForRes()
+		btnClicks()
+		collectUserUpdate()
+		collectMsgs()
+		registerForRes()
 
-    }
+	}
 
-    private fun registerForRes() {
-        getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            uri?.let {
-                uploadData(it)
-            }
-        }
-    }
+	private fun registerForRes() {
+		getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+			uri?.let {
+				uploadData(it)
+			}
+		}
+	}
 
-    private fun uploadData(uri: Uri) {
-        viewModel.updateProfilePic(uri)
-    }
+	private fun uploadData(uri : Uri) {
+		viewModel.updateProfilePic(uri)
+	}
 
-    private fun collectMsgs() {
-        lifecycleScope.launchWhenStarted {
-            viewModel.msgEvent.collect {
-                when (it) {
-                    is MessageEvent.Toast -> shortToast(it.msg)
-                    is MessageEvent.SnackBar -> {
-                        bind.root.shortSnack(it.msg)
-                    }
-                }
-            }
-        }
-    }
+	private fun collectMsgs() {
+		lifecycleScope.launchWhenStarted {
+			viewModel.msgEvent.collect {
+				when (it) {
+					is MessageEvent.Toast -> requireContext().toast(it.msg)
+					is MessageEvent.SnackBar -> {
+						bind.root.shortSnack(it.msg)
+					}
+					else -> Unit
+				}
+			}
+		}
+	}
 
-    private fun collectUserUpdate() {
-        lifecycleScope.launchWhenStarted {
-            viewModel.userUpdate.collect {
-                when (it) {
-                    State.SUCCESS -> findNavController().popBackStack()
-                    else -> Unit
-                }
-            }
-        }
-    }
+	private fun collectUserUpdate() {
+		lifecycleScope.launchWhenStarted {
+			viewModel.userUpdate.collect {
+				when (it) {
+					State.SUCCESS -> findNavController().popBackStack()
+					else -> Unit
+				}
+			}
+		}
+	}
 
-    private fun btnClicks() {
+	private fun btnClicks() {
 
-        bind.imgProfilePic.setOnClickListener {
-            getContent.launch("image/*")
-        }
+		bind.imgProfilePic.setOnClickListener {
+			getContent.launch("image/*")
+		}
 
-        bind.etName.addTextChangedListener {
-            viewModel.setNewName(it.toString())
-        }
+		bind.etName.addTextChangedListener {
+			viewModel.setNewName(it.toString())
+		}
 
-        bind.etPhoneNo.addTextChangedListener {
-            viewModel.setMobileNo(it.toString())
-        }
+		bind.etPhoneNo.addTextChangedListener {
+			viewModel.setMobileNo(it.toString())
+		}
 
-        bind.btnUpdate.setOnClickListener {
-
-
-            lifecycleScope.launch(Dispatchers.Main) {
-                viewModel.updateDetails()
-            }
-        }
-    }
-
-    private fun collectUserDetails() {
-        viewModel.userDetails.observe(viewLifecycleOwner) {
-            when (it) {
-                is UserState.Error -> Unit
-                is UserState.Success -> {
-                    bind.etName.setText(it.user.name)
-                    bind.etPhoneNo.setText(it.user.phoneNo)
-                    bind.imgProfilePic.glideUrl(it.user.profilePicUrl)
-                }
-                else -> Unit
-            }
-        }
-    }
+		bind.btnUpdate.setOnClickListener {
 
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _bind = null
-    }
+			lifecycleScope.launch(Dispatchers.Main) {
+				viewModel.updateDetails()
+			}
+		}
+	}
+
+	private fun collectUserDetails() {
+		viewModel.userDetails.observe(viewLifecycleOwner) {
+			when (it) {
+				is UserState.Error -> Unit
+				is UserState.Success -> {
+					bind.etName.setText(it.user.name)
+					bind.etPhoneNo.setText(it.user.phoneNo)
+					bind.imgProfilePic.glideUrl(it.user.profilePicUrl)
+				}
+				else -> Unit
+			}
+		}
+	}
+
+
+	override fun onDestroyView() {
+		super.onDestroyView()
+		_bind = null
+	}
 
 }
 

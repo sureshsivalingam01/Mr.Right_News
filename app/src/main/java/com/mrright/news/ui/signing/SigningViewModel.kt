@@ -34,163 +34,166 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SigningViewModel @Inject constructor(
-    private val context: Context,
-    private val authRepository: AuthRepository,
-    private val userRepository: UserRepository,
+	private val context : Context,
+	private val authRepository : AuthRepository,
+	private val userRepository : UserRepository,
 ) : ViewModel() {
 
 
-    private val _signingUIState = MutableStateFlow<SigningUIState>(SigningUIState.SignIn)
-    val signingUIState: StateFlow<SigningUIState> get() = _signingUIState
+	private val _signingUIState = MutableStateFlow<SigningUIState>(SigningUIState.SignIn)
+	val signingUIState : StateFlow<SigningUIState> get() = _signingUIState
 
 
-    private val _authSigning: MutableLiveData<SigningState> =
-        MutableLiveData(SigningState.None)
-    val authSigning: LiveData<SigningState> get() = _authSigning
+	private val _authSigning : MutableLiveData<SigningState> = MutableLiveData(SigningState.None)
+	val authSigning : LiveData<SigningState> get() = _authSigning
 
 
-    private val msgChannel = Channel<MessageEvent>()
-    val msgFlow = msgChannel.receiveAsFlow()
+	private val msgChannel = Channel<MessageEvent>()
+	val msgFlow = msgChannel.receiveAsFlow()
 
 
-    fun googleSigning(
-        sign: SIGN,
-        task: Task<GoogleSignInAccount>,
-    ) {
+	fun googleSigning(
+		sign : SIGN,
+		task : Task<GoogleSignInAccount>,
+	) {
 
-        viewModelScope.launch(Dispatchers.Main) {
+		viewModelScope.launch(Dispatchers.Main) {
 
-            _authSigning.value = SigningState.LoadingStringRes(R.string.loading)
-            delay(500L)
+			_authSigning.value = SigningState.LoadingStringRes(R.string.loading)
+			delay(500L)
 
-            val result = withContext(IO) {
-                authRepository.getTokenId(task)
-            }
+			val result = withContext(IO) {
+				authRepository.getTokenId(task)
+			}
 
-            when (result) {
-                is Resource.Failure -> {
-                    _authSigning.value = SigningState.Error
-                    msgChannel.send(MessageEvent.Toast(result.ex.handle()))
-                }
-                is Resource.Success -> {
-                    checkUserExist(result.value, sign)
-                }
-            }
-        }
+			result.collect {
+				when (it) {
+					is Resource.Failure -> {
+						_authSigning.value = SigningState.Error
+						msgChannel.send(MessageEvent.Toast(it.ex.handle()))
+					}
+					is Resource.Success -> {
+						checkUserExist(it.value, sign)
+					}
+				}
+			}
+		}
 
-    }
+	}
 
-    private suspend fun checkUserExist(account: GoogleSignInAccount, sign: SIGN) {
+	private suspend fun checkUserExist(
+		account : GoogleSignInAccount,
+		sign : SIGN,
+	) {
 
-        userRepository.checkUserExist(account.email!!).collect {
-            when (it) {
-                is Source.Failure -> {
-                    if (sign == SIGN.IN) {
-                        _authSigning.value = SigningState.Error
-                        msgChannel.send(MessageEvent.Toast(it.ex.handle()))
-                    } else {
-                        signIn(
-                            GoogleAuthProvider.getCredential(account.idToken, null),
-                            sign,
-                        )
-                    }
-                }
-                is Source.Success -> {
-                    if (sign == SIGN.IN) {
-                        signIn(
-                            GoogleAuthProvider.getCredential(account.idToken, null),
-                            sign,
-                        )
-                    } else {
-                        _authSigning.value = SigningState.Error
-                        msgChannel.send(MessageEvent.ToastStringRes(R.string.account_exist))
-                    }
-                }
-            }
-        }
-    }
+		userRepository.checkUserExist(account.email!!)
+			.collect {
+				when (it) {
+					is Source.Failure -> {
+						if (sign == SIGN.IN) {
+							_authSigning.value = SigningState.Error
+							msgChannel.send(MessageEvent.Toast(it.ex.handle()))
+						}
+						else {
+							signIn(
+								GoogleAuthProvider.getCredential(account.idToken, null),
+								sign,
+							)
+						}
+					}
+					is Source.Success -> {
+						if (sign == SIGN.IN) {
+							signIn(
+								GoogleAuthProvider.getCredential(account.idToken, null),
+								sign,
+							)
+						}
+						else {
+							_authSigning.value = SigningState.Error
+							msgChannel.send(MessageEvent.ToastStringRes(R.string.account_exist))
+						}
+					}
+				}
+			}
+	}
 
-    private suspend fun signIn(credential: AuthCredential, sign: SIGN) {
+	private suspend fun signIn(
+		credential : AuthCredential,
+		sign : SIGN,
+	) {
 
-        _authSigning.value = SigningState.LoadingStringRes(R.string.getting_details)
-        delay(500L)
+		_authSigning.value = SigningState.LoadingStringRes(R.string.getting_details)
+		delay(500L)
 
-        val result = withContext(IO) {
-            authRepository.signIn(credential)
-        }
+		val result = withContext(IO) {
+			authRepository.signIn(credential)
+		}
 
-        when (result) {
-            is Resource.Failure -> {
-                _authSigning.value = SigningState.Error
-                msgChannel.send(MessageEvent.Toast(result.ex.handle()))
-            }
-            is Resource.Success -> {
+		result.collect {
+			when (it) {
+				is Resource.Failure -> {
+					_authSigning.value = SigningState.Error
+					msgChannel.send(MessageEvent.Toast(it.ex.handle()))
+				}
+				is Resource.Success -> {
 
-                if (sign == SIGN.IN) {
-                    _authSigning.value = SigningState.SignedIn
-                    msgChannel.send(
-                        MessageEvent.Toast(
-                            context.getString(
-                                R.string.welcome_signed_in,
-                                result.value.user?.displayName!!
-                            )
-                        )
-                    )
-                } else {
-                    createUser(result.value.user!!)
-                }
+					if (sign == SIGN.IN) {
+						_authSigning.value = SigningState.SignedIn
+						msgChannel.send(MessageEvent.Toast(context.getString(R.string.welcome_signed_in, it.value.user?.displayName!!)))
+					}
+					else {
+						createUser(it.value.user!!)
+					}
 
-            }
-        }
+				}
+			}
+		}
 
-    }
+	}
 
-    private suspend fun createUser(firebaseUser: FirebaseUser) {
+	private suspend fun createUser(firebaseUser : FirebaseUser) {
 
-        _authSigning.value = SigningState.LoadingStringRes(R.string.creating_user)
-        delay(500L)
+		_authSigning.value = SigningState.LoadingStringRes(R.string.creating_user)
+		delay(500L)
 
-        val user = User(
-            firebaseUser.uid,
-            firebaseUser.email ?: "",
-            firebaseUser.displayName ?: "",
-            firebaseUser.providerData[0].phoneNumber ?: "",
-            firebaseUser.providerData[0].photoUrl.toString(),
-        )
+		val user = User(
+			firebaseUser.uid,
+			firebaseUser.email ?: "",
+			firebaseUser.displayName ?: "",
+			firebaseUser.providerData[0].phoneNumber ?: "",
+			firebaseUser.providerData[0].photoUrl.toString(),
+		)
 
-        val result = withContext(IO) {
-            userRepository.createUser(user.toUserDTO())
-        }
+		val result = withContext(IO) {
+			userRepository.createUser(user.toUserDTO())
+		}
 
-        when (result) {
-            is Source.Failure -> {
-                _authSigning.value = SigningState.Error
-                msgChannel.send(MessageEvent.Toast(result.ex.handle()))
-            }
-            is Source.Success -> {
-                _authSigning.value = SigningState.SignedUp
-                msgChannel.send(
-                    MessageEvent.Toast(
-                        context.resources.getString(
-                            R.string.welcome_signed_up,
-                            user.name
-                        )
-                    )
-                )
-            }
-        }
+		result.collect {
 
-    }
+			when (it) {
+				is Source.Failure -> {
+					_authSigning.value = SigningState.Error
+					msgChannel.send(MessageEvent.Toast(it.ex.handle()))
+				}
+				is Source.Success -> {
+					_authSigning.value = SigningState.SignedUp
+					msgChannel.send(MessageEvent.Toast(context.resources.getString(R.string.welcome_signed_up, user.name)))
+				}
+			}
 
-    fun toggle() {
-        viewModelScope.launch {
-            if (signingUIState.value == SigningUIState.SignUp) {
-                _signingUIState.value = SigningUIState.SignIn
-            } else {
-                _signingUIState.value = SigningUIState.SignUp
-            }
-        }
-    }
+		}
+	}
+
+	fun toggle() {
+		viewModelScope.launch {
+			if (signingUIState.value == SigningUIState.SignUp) {
+				_signingUIState.value = SigningUIState.SignIn
+			}
+			else {
+				_signingUIState.value = SigningUIState.SignUp
+			}
+		}
+	}
 
 
 }

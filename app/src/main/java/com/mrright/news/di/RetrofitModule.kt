@@ -23,46 +23,51 @@ import javax.inject.Singleton
 object RetrofitModule {
 
 
-    @Provides
-    @Singleton
-    fun provideGsonConverterFactory(): GsonConverterFactory = GsonConverterFactory.create()
+	@Provides
+	@Singleton
+	fun provideGsonConverterFactory() : GsonConverterFactory = GsonConverterFactory.create()
 
 
-    @Provides
-    @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor().apply {
-                level = if (BuildConfig.DEBUG) {
-                    Level.BODY
-                } else {
-                    Level.NONE
-                }
-            }).apply {
-                readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
-                connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
-                writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
-            }
-            .build()
-    }
+	@Provides
+	@Singleton
+	fun provideOkHttpClient() : OkHttpClient {
+		return OkHttpClient.Builder()
+			.addInterceptor(HttpLoggingInterceptor().apply {
+				level = if (BuildConfig.DEBUG) {
+					Level.BODY
+				}
+				else {
+					Level.NONE
+				}
+			})
+			.apply {
+				readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
+				connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
+				writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
+			}
+			.build()
+	}
 
 
-    @Provides
-    @Singleton
-    fun provideRetrofit(
-        @BaseUrl baseUrl: String,
-        gsonConverterFactory: GsonConverterFactory,
-        okHttpClient: OkHttpClient,
-    ): Retrofit {
-        return Retrofit.Builder().addConverterFactory(gsonConverterFactory).baseUrl(baseUrl)
-            .client(okHttpClient).build()
-    }
+	@Provides
+	@Singleton
+	fun provideRetrofit(
+		@BaseUrl baseUrl : String,
+		gsonConverterFactory : GsonConverterFactory,
+		okHttpClient : OkHttpClient,
+	) : Retrofit {
+		return Retrofit.Builder()
+			.addConverterFactory(gsonConverterFactory)
+			.baseUrl(baseUrl)
+			.client(okHttpClient)
+			.build()
+	}
 
 
-    @Provides
-    @Singleton
-    fun provideNewsService(
-        retrofit: Retrofit,
-    ): NewsService = retrofit.create(NewsService::class.java)
+	@Provides
+	@Singleton
+	fun provideNewsService(
+		retrofit : Retrofit,
+	) : NewsService = retrofit.create(NewsService::class.java)
 
 }

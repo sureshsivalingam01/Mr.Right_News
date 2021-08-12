@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.mrright.news.db.Resource
 import com.mrright.news.db.api.repositories.NewsRepository
 import com.mrright.news.db.api.responses.NewsDTO
-import com.mrright.news.models.News
 import com.mrright.news.ui.states.QueryState
 import com.mrright.news.ui.states.UIState
 import com.mrright.news.utils.exceptions.handle
@@ -21,81 +20,69 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val newsRepository: NewsRepository
+	private val newsRepository : NewsRepository,
 ) : ViewModel() {
 
-    val uiState = MutableStateFlow<UIState>(UIState.Init)
+	val uiState = MutableStateFlow<UIState>(UIState.Init)
 
-    var queryNewsPage = 1
-    var listSize = 0
-    var queryText = ""
-    private var breakingNewsResponse: NewsDTO? = null
+	var queryNewsPage = 1
+	var listSize = 0
+	private var queryText = ""
+	private var breakingNewsResponse : NewsDTO? = null
 
-    private val _news = MutableLiveData<SearchState>(SearchState.None)
-    val news: LiveData<SearchState> get() = _news
-
-
-    fun searchParticular(query: QueryState = QueryState.Paginate) {
-
-        viewModelScope.launch(Dispatchers.Main) {
-
-            _news.value = SearchState.Loading()
-            val result = withContext(Dispatchers.IO) {
-                if (query is QueryState.Search) {
-                    queryText = query.txt
-                    queryNewsPage = 1
-                    breakingNewsResponse = null
-                    return@withContext newsRepository.searchQuery(query.txt, queryNewsPage)
-                } else {
-                    return@withContext newsRepository.searchQuery(queryText, queryNewsPage)
-                }
-
-            }
-            result.collect {
-                when (it) {
-                    is Resource.Failure -> {
-                        _news.value = SearchState.Error(it.ex.handle())
-
-                    }
-                    is Resource.Success -> {
-
-                        if (breakingNewsResponse == null) {
-                            breakingNewsResponse = it.value
-                        }
-
-                        listSize = it.value.totalResults!!
-
-                        queryNewsPage++
-
-                        if (query is QueryState.Paginate) {
-                            _news.value =
-                                SearchState.Paginated(
-                                    breakingNewsResponse?.toNews() ?: it.value.toNews()
-                                )
-                        } else {
-                            _news.value =
-                                SearchState.Searched(
-                                    breakingNewsResponse?.toNews() ?: it.value.toNews()
-                                )
-                        }
+	private val _news = MutableLiveData<SearchState>(SearchState.None)
+	val news : LiveData<SearchState> get() = _news
 
 
-                    }
-                }
-            }
-        }
-    }
+	fun searchParticular(query : QueryState = QueryState.Paginate) {
 
-    fun changeUIState(uiState: UIState) {
-        this.uiState.value = uiState
-    }
+		viewModelScope.launch(Dispatchers.Main) {
 
-}
+			_news.value = SearchState.Loading()
+			val result = withContext(Dispatchers.IO) {
+				if (query is QueryState.Search) {
+					queryText = query.txt
+					queryNewsPage = 1
+					breakingNewsResponse = null
+					return@withContext newsRepository.searchQuery(query.txt, queryNewsPage)
+				}
+				else {
+					return@withContext newsRepository.searchQuery(queryText, queryNewsPage)
+				}
 
-sealed class SearchState {
-    data class Searched(val value: News) : SearchState()
-    data class Paginated(val value: News) : SearchState()
-    data class Error(val msg: String = "Unknown Error") : SearchState()
-    data class Loading(val msg: String = "Loading") : SearchState()
-    object None : SearchState()
+			}
+			result.collect {
+				when (it) {
+					is Resource.Failure -> {
+						_news.value = SearchState.Error(it.ex.handle())
+
+					}
+					is Resource.Success -> {
+
+						if (breakingNewsResponse == null) {
+							breakingNewsResponse = it.value
+						}
+
+						listSize = it.value.totalResults!!
+
+						queryNewsPage++
+
+						if (query is QueryState.Paginate) {
+							_news.value = SearchState.Paginated(breakingNewsResponse?.toNews() ?: it.value.toNews())
+						}
+						else {
+							_news.value = SearchState.Searched(breakingNewsResponse?.toNews() ?: it.value.toNews())
+						}
+
+
+					}
+				}
+			}
+		}
+	}
+
+	fun changeUIState(uiState : UIState) {
+		this.uiState.value = uiState
+	}
+
 }

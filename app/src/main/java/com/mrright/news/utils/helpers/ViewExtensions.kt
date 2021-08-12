@@ -7,25 +7,29 @@ import com.google.android.material.snackbar.Snackbar
 
 
 fun View.visible() {
-    this.visibility = View.VISIBLE
+	this.visibility = View.VISIBLE
 }
 
 fun View.inVisible() {
-    this.visibility = View.INVISIBLE
+	this.visibility = View.INVISIBLE
 }
 
 fun View.gone() {
-    this.visibility = View.GONE
+	this.visibility = View.GONE
 }
 
 fun View.shortSnack(
-    text: String,
-    actionText: String? = null,
-    action: ((View) -> Unit)? = null,
+	text : String,
+	actionText : String? = null,
+	action : ((View) -> Unit)? = null,
 ) {
-    Snackbar.make(this, text, Snackbar.LENGTH_SHORT).setAction(actionText, action).show()
+	Snackbar.make(this, text, Snackbar.LENGTH_SHORT)
+		.setAction(actionText, action)
+		.show()
 }
 
-fun Toolbar.setStringResTitle(@StringRes id: Int) {
-    this.title = this.context.getString(id)
+
+//Toolbar Extension
+fun Toolbar.setStringResTitle(@StringRes id : Int) {
+	this.title = this.context.getString(id)
 }

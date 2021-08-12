@@ -18,34 +18,34 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @InstallIn(ViewModelComponent::class)
 object RepositoryModule {
 
-    @Provides
-    @ViewModelScoped
-    fun provideNewsRepo(
-        @ApiKey apiKey: String,
-        newsService: NewsService,
-    ): NewsRepository {
-        return NewsRepoImpl(apiKey, newsService)
-    }
+	@Provides
+	@ViewModelScoped
+	fun provideNewsRepo(
+		@ApiKey apiKey : String,
+		newsService : NewsService,
+	) : NewsRepository {
+		return NewsRepoImpl(apiKey, newsService)
+	}
 
-    @Provides
-    @ViewModelScoped
-    fun provideAuthRepo(
-        auth: FirebaseAuth,
-    ): AuthRepository = AuthRepoImpl(auth)
+	@Provides
+	@ViewModelScoped
+	fun provideAuthRepo(
+		auth : FirebaseAuth,
+	) : AuthRepository = AuthRepoImpl(auth)
 
-    @Provides
-    @ViewModelScoped
-    fun provideUserRepo(
-        auth: FirebaseAuth,
-        storage:FirebaseStorage,
-        @UserCollection userCollection: CollectionReference,
-    ): UserRepository = UserRepoImpl(auth,storage,userCollection)
+	@Provides
+	@ViewModelScoped
+	fun provideUserRepo(
+		auth : FirebaseAuth,
+		storage : FirebaseStorage,
+		@UserCollection userCollection : CollectionReference,
+	) : UserRepository = UserRepoImpl(auth, storage, userCollection)
 
-    @Provides
-    @ViewModelScoped
-    fun provideArticleRepo(
-        auth: FirebaseAuth,
-        @UserCollection userCollection: CollectionReference,
-    ): ArticleRepository = ArticleRepoImpl(auth, userCollection)
+	@Provides
+	@ViewModelScoped
+	fun provideArticleRepo(
+		auth : FirebaseAuth,
+		@UserCollection userCollection : CollectionReference,
+	) : ArticleRepository = ArticleRepoImpl(auth, userCollection)
 
 }

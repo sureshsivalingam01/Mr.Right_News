@@ -1,6 +1,6 @@
 package com.mrright.news.ui.states
 
-sealed class UIState{
-    object Init : UIState()
-    object None : UIState()
+sealed class UIState {
+	object Init : UIState()
+	object None : UIState()
 }

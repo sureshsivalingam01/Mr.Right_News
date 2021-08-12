@@ -27,145 +27,165 @@ import javax.inject.Inject
 
 
 class UserRepoImpl @Inject constructor(
-    private val auth: FirebaseAuth,
-    private val storage: FirebaseStorage,
-    @UserCollection private val userCollection: CollectionReference,
+	private val auth : FirebaseAuth,
+	private val storage : FirebaseStorage,
+	@UserCollection private val userCollection : CollectionReference,
 ) : UserRepository {
 
-    override suspend fun createUser(
-        user: UserDTO,
-    ): Source {
-        return try {
-            val result = userCollection.document(user.uid)
-                .set(user)
-                .await()
-            infoLog("createUser | Success | $result")
-            Source.Success
-        } catch (e: Exception) {
-            errorLog("createUser | Exception", e)
-            Source.Failure(e)
-        }
-    }
+	override suspend fun createUser(
+		user : UserDTO,
+	) : Flow<Source> = flow {
+		try {
+			val result = userCollection.document(user.uid)
+				.set(user)
+				.await()
+			infoLog("createUser | Success | $result")
+			emit(Source.Success)
+		}
+		catch (e : Exception) {
+			errorLog("createUser | Exception", e)
+			emit(Source.Failure(e))
+		}
+	}
 
-    override suspend fun getUser(
-        uid: String,
-    ): Resource<UserDTO> {
+	override suspend fun getUser(
+		uid : String,
+	) : Flow<Resource<UserDTO>> = flow {
 
-        return try {
-            val result = userCollection.document(uid)
-                .get()
-                .await().toObject(UserDTO::class.java)
+		try {
+			val result = userCollection.document(uid)
+				.get()
+				.await()
+				.toObject(UserDTO::class.java)
 
-            if (result != null) {
-                infoLog("getAccountDetails | Success | $result")
-                Resource.Success(result)
-            } else {
-                throw NoUserException()
-            }
-        } catch (e: Exception) {
-            errorLog("getAccountDetails | Exception", e)
-            Resource.Failure(e)
-        }
-    }
+			if (result != null) {
+				infoLog("getAccountDetails | Success | $result")
+				emit(Resource.Success(result))
+			}
+			else {
+				throw NoUserException()
+			}
+		}
+		catch (e : Exception) {
+			errorLog("getAccountDetails | Exception", e)
+			emit(Resource.Failure(e))
+		}
+	}
 
 
-    override suspend fun updateUser(name: String?, phoneNo: String?): Flow<Source> = flow {
+	override suspend fun updateUser(
+		name : String?,
+		phoneNo : String?,
+	) : Flow<Source> = flow {
 
-        try {
-            val map: MutableMap<String, Any> = mutableMapOf()
-            if (name != null) {
-                map["name"] = name
-            }
-            if (phoneNo != null) {
-                map["phoneNo"] = phoneNo
-            }
+		try {
+			val map : MutableMap<String, Any> = mutableMapOf()
+			if (name != null) {
+				map["name"] = name
+			}
+			if (phoneNo != null) {
+				map["phoneNo"] = phoneNo
+			}
 
-            userCollection.document(auth.currentUser?.uid!!).update(map).await()
-            infoLog("updateUser | Success | Updated")
-            emit(Source.Success)
-        } catch (e: Exception) {
-            errorLog("updateUser | Failure | ${e.message}")
-            emit(Source.Failure(e))
-        }
-    }
+			userCollection.document(auth.currentUser?.uid!!)
+				.update(map)
+				.await()
+			infoLog("updateUser | Success | Updated")
+			emit(Source.Success)
+		}
+		catch (e : Exception) {
+			errorLog("updateUser | Failure | ${e.message}")
+			emit(Source.Failure(e))
+		}
+	}
 
-    @ExperimentalCoroutinesApi
-    override suspend fun userDetailsCallBack(): Flow<UserState> = callbackFlow {
-        val listener =
-            userCollection.document(auth.currentUser?.uid!!).addSnapshotListener { value, error ->
-                error?.let {
-                    trySend(UserState.Error)
-                    cancel(error.message ?: "", error)
-                    errorLog("getUserCallBack | Failed | ${error.message}")
-                    return@addSnapshotListener
-                }
+	@ExperimentalCoroutinesApi
+	override suspend fun userDetailsCallBack() : Flow<UserState> = callbackFlow {
+		val listener = userCollection.document(auth.currentUser?.uid!!)
+			.addSnapshotListener { value, error ->
+				error?.let {
+					trySend(UserState.Error)
+					cancel(error.message ?: "", error)
+					errorLog("getUserCallBack | Failed | ${error.message}")
+					return@addSnapshotListener
+				}
 
-                trySend(UserState.Success(value?.toObject(User::class.java) ?: User()))
-                infoLog("getUserCallBack | Success | $value")
-            }
-        awaitClose { listener.remove() }
-    }.flowOn(Dispatchers.IO)
+				trySend(UserState.Success(value?.toObject(User::class.java) ?: User()))
+				infoLog("getUserCallBack | Success | $value")
+			}
+		awaitClose { listener.remove() }
+	}.flowOn(Dispatchers.IO)
 
-    override suspend fun updateProfilePic(profilePic: Uri): Flow<State> = flow {
-        try {
+	override suspend fun updateProfilePic(profilePic : Uri) : Flow<State> = flow {
+		try {
 
-            val result =
-                storage.reference.child("Profile Pictures/${auth.currentUser?.email}/profilePic")
-                    .putFile(profilePic).await()
+			val result = storage.reference.child("Profile Pictures/${auth.currentUser?.email}/profilePic")
+				.putFile(profilePic)
+				.await()
 
-            val uri = result.metadata?.reference?.downloadUrl?.await()
+			val uri = result.metadata?.reference?.downloadUrl?.await()
 
-            if (uri != null) {
-                userCollection.document(auth.currentUser?.uid!!)
-                    .update("profilePicUrl", uri.toString()).await()
-                infoLog("updateProfilePic | Success | $uri")
-                emit(State.SUCCESS)
-            } else {
-                throw Exception("UploadFailed")
-            }
+			if (uri != null) {
+				userCollection.document(auth.currentUser?.uid!!)
+					.update("profilePicUrl", uri.toString())
+					.await()
+				infoLog("updateProfilePic | Success | $uri")
+				emit(State.SUCCESS)
+			}
+			else {
+				throw Exception("UploadFailed")
+			}
 
-        } catch (e: Exception) {
-            errorLog("updateProfilePic | Failed | ${e.message}")
-            emit(State.FAILED)
-        }
-    }
+		}
+		catch (e : Exception) {
+			errorLog("updateProfilePic | Failed | ${e.message}")
+			emit(State.FAILED)
+		}
+	}
 
-    override suspend fun checkUserExist(email: String): Flow<Source> = flow {
-        try {
+	override suspend fun checkUserExist(email : String) : Flow<Source> = flow {
+		try {
 
-            val result = userCollection.whereEqualTo("email", email).limit(1).get().await()
-                .toObjects(UserDTO::class.java)
+			val result = userCollection.whereEqualTo("email", email)
+				.limit(1)
+				.get()
+				.await()
+				.toObjects(UserDTO::class.java)
 
-            when (result.size) {
-                1 -> {
-                    infoLog("checkUserExist | Success | ${result[0]}")
-                    emit(Source.Success)
-                }
-                else -> {
-                    throw Exception("No User Exists")
-                }
-            }
+			when (result.size) {
+				1 -> {
+					infoLog("checkUserExist | Success | ${result[0]}")
+					emit(Source.Success)
+				}
+				else -> {
+					throw Exception("No User Exists")
+				}
+			}
 
-        } catch (e: Exception) {
-            errorLog("checkUserExist | Failed | ${e.message}")
-            emit(Source.Failure(e))
-        }
-    }
+		}
+		catch (e : Exception) {
+			errorLog("checkUserExist | Failed | ${e.message}")
+			emit(Source.Failure(e))
+		}
+	}
 }
 
 
 interface UserRepository {
 
-    suspend fun createUser(user: UserDTO): Source
+	suspend fun createUser(user : UserDTO) : Flow<Source>
 
-    suspend fun getUser(uid: String): Resource<UserDTO>
+	suspend fun getUser(uid : String) : Flow<Resource<UserDTO>>
 
-    suspend fun updateUser(name: String? = null, phoneNo: String? = null): Flow<Source>
+	suspend fun updateUser(
+		name : String? = null,
+		phoneNo : String? = null,
+	) : Flow<Source>
 
-    suspend fun userDetailsCallBack(): Flow<UserState>
+	suspend fun userDetailsCallBack() : Flow<UserState>
 
-    suspend fun updateProfilePic(profilePic: Uri): Flow<State>
+	suspend fun updateProfilePic(profilePic : Uri) : Flow<State>
 
-    suspend fun checkUserExist(email: String): Flow<Source>
+	suspend fun checkUserExist(email : String) : Flow<Source>
 
 }

@@ -9,48 +9,53 @@ import com.mrright.news.db.Resource
 import com.mrright.news.utils.exceptions.SignInException
 import com.mrright.news.utils.helpers.errorLog
 import com.mrright.news.utils.helpers.infoLog
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 
 class AuthRepoImpl @Inject constructor(
-    private val auth: FirebaseAuth,
+	private val auth : FirebaseAuth,
 ) : AuthRepository {
 
-    override suspend fun getTokenId(task: Task<GoogleSignInAccount>): Resource<GoogleSignInAccount> {
-        return try {
-            val result = task.await()
-            infoLog("getTokenId | Success | ${result.account}")
-            return Resource.Success(result)
-        } catch (e: Exception) {
-            errorLog("getTokenId | Exception", e)
-            Resource.Failure(e)
-        }
-    }
+	override suspend fun getTokenId(task : Task<GoogleSignInAccount>) : Flow<Resource<GoogleSignInAccount>> = flow {
+		try {
+			val result = task.await()
+			infoLog("getTokenId | Success | ${result.account}")
+			emit(Resource.Success(result))
+		}
+		catch (e : Exception) {
+			errorLog("getTokenId | Exception", e)
+			emit(Resource.Failure(e))
+		}
+	}
 
-    override suspend fun signIn(credential: AuthCredential): Resource<AuthResult> {
-        return try {
-            val result = auth.signInWithCredential(credential)
-                .await()
+	override suspend fun signIn(credential : AuthCredential) : Flow<Resource<AuthResult>> = flow {
+		try {
+			val result = auth.signInWithCredential(credential)
+				.await()
 
-            if (result != null) {
-                infoLog("signIn | Success | ${result.user}")
-                Resource.Success(result)
-            } else {
-                throw SignInException()
-            }
-        } catch (e: Exception) {
-            errorLog("signIn | Exception", e)
-            Resource.Failure(e)
-        }
-    }
+			if (result != null) {
+				infoLog("signIn | Success | ${result.user}")
+				emit(Resource.Success(result))
+			}
+			else {
+				throw SignInException()
+			}
+		}
+		catch (e : Exception) {
+			errorLog("signIn | Exception", e)
+			emit(Resource.Failure(e))
+		}
+	}
 }
 
 
 interface AuthRepository {
 
-    suspend fun getTokenId(task: Task<GoogleSignInAccount>): Resource<GoogleSignInAccount>
+	suspend fun getTokenId(task : Task<GoogleSignInAccount>) : Flow<Resource<GoogleSignInAccount>>
 
-    suspend fun signIn(credential: AuthCredential): Resource<AuthResult>
+	suspend fun signIn(credential : AuthCredential) : Flow<Resource<AuthResult>>
 
 }

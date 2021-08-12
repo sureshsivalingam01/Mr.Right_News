@@ -14,20 +14,20 @@ import javax.inject.Singleton
 object AppModule {
 
 
-    @BaseUrl
-    @Provides
-    @Singleton
-    fun provideBaseUrl(): String = BuildConfig.BASE_URL
+	@BaseUrl
+	@Provides
+	@Singleton
+	fun provideBaseUrl() : String = BuildConfig.BASE_URL
 
 
-    @ApiKey
-    @Provides
-    @Singleton
-    fun provideApiKey(): String = BuildConfig.API_KEY
+	@ApiKey
+	@Provides
+	@Singleton
+	fun provideApiKey() : String = BuildConfig.API_KEY
 
-    @Provides
-    @Singleton
-    fun provideContext(application: Application): Context = application.applicationContext
+	@Provides
+	@Singleton
+	fun provideContext(application : Application) : Context = application.applicationContext
 
 
 }

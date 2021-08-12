@@ -1,11 +1,11 @@
 package com.mrright.news.db
 
 sealed class Resource<out T> {
-    data class Success<out R>(val value: R) : Resource<R>()
-    data class Failure(val ex: Throwable) : Resource<Nothing>()
+	data class Success<out R>(val value : R) : Resource<R>()
+	data class Failure(val ex : Throwable) : Resource<Nothing>()
 }
 
 sealed class Source {
-    object Success : Source()
-    data class Failure(val ex: Throwable) : Source()
+	object Success : Source()
+	data class Failure(val ex : Throwable) : Source()
 }

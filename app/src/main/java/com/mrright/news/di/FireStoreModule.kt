@@ -13,12 +13,12 @@ import javax.inject.Singleton
 object FireStoreModule {
 
 
-    @Provides
-    @Singleton
-    @UserCollection
-    fun provideUserCollection(
-        fireStore: FirebaseFirestore,
-    ) = fireStore.collection(Collection.USERS.value)
+	@Provides
+	@Singleton
+	@UserCollection
+	fun provideUserCollection(
+		fireStore : FirebaseFirestore,
+	) = fireStore.collection(Collection.USERS.value)
 
 
 }

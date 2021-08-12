@@ -17,58 +17,62 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class LikedArticleFragment : Fragment() {
 
-    private var _bind: LikedArticleFragmentBinding? = null
-    private val bind get() = _bind!!
+	private var _bind : LikedArticleFragmentBinding? = null
+	private val bind get() = _bind!!
 
-    private lateinit var articleAdapter: ArticleFirestoreAdapter
+	private lateinit var articleAdapter : ArticleFirestoreAdapter
 
-    private val viewModel: LikedArticleViewModel by activityViewModels()
+	private val viewModel : LikedArticleViewModel by activityViewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _bind = LikedArticleFragmentBinding.inflate(inflater, container, false)
-        return bind.root
-    }
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	override fun onCreateView(
+		inflater : LayoutInflater,
+		container : ViewGroup?,
+		savedInstanceState : Bundle?,
+	) : View {
+		_bind = LikedArticleFragmentBinding.inflate(inflater, container, false)
+		return bind.root
+	}
 
 
-        //onItemView Click Navigates to Article Fragment
-        articleAdapter = ArticleFirestoreAdapter(viewModel.options) {
-            findNavController().navigate(
-                R.id.action_likedArticleFragment_to_articleFragment,
-                Bundle().apply { putSerializable("article", it.toArticle()) },
-            )
-        }
-
-        //init Liked Articles RecyclerView
-        bind.rvLikedArticles.apply {
-            adapter = articleAdapter
-            layoutManager = LinearLayoutManager(requireContext())
-        }
-
-    }
+	override fun onViewCreated(
+		view : View,
+		savedInstanceState : Bundle?,
+	) {
+		super.onViewCreated(view, savedInstanceState)
 
 
-    override fun onStart() {
-        super.onStart()
-        //StartListening Must for Firestore RecyclerView
-        articleAdapter.startListening()
-    }
+		//onItemView Click Navigates to Article Fragment
+		articleAdapter = ArticleFirestoreAdapter(viewModel.options) {
+			findNavController().navigate(
+				R.id.action_likedArticleFragment_to_articleFragment,
+				Bundle().apply { putSerializable("article", it.toArticle()) },
+			)
+		}
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _bind = null
-    }
+		//init Liked Articles RecyclerView
+		bind.rvLikedArticles.apply {
+			adapter = articleAdapter
+			layoutManager = LinearLayoutManager(requireContext())
+		}
 
-    override fun onDestroy() {
-        super.onDestroy()
-        //StopListening Must for Firestore RecyclerView
-        articleAdapter.stopListening()
-    }
+	}
+
+
+	override fun onStart() {
+		super.onStart()
+		//StartListening Must for Firestore RecyclerView
+		articleAdapter.startListening()
+	}
+
+	override fun onDestroyView() {
+		super.onDestroyView()
+		_bind = null
+	}
+
+	override fun onDestroy() {
+		super.onDestroy()
+		//StopListening Must for Firestore RecyclerView
+		articleAdapter.stopListening()
+	}
 
 }
