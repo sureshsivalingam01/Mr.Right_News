@@ -18,8 +18,16 @@
     <string name="creating_user">Creating User</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
+    <string name="google_sign_in">Google Sign In</string>
+    <string name="google_sign_up">Google Sign Up</string>
 
     <string name="new_user_register">New User !\n Please Register</string>
     <string name="old_user_sign_in">Already Registered !\n Please Sign In</string>
+    <string name="name">Name</string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="update">Update</string>
+    <string name="email">Email</string>
+    <string name="title">Title</string>
+    <string name="date">Date</string>
 
 </resources>

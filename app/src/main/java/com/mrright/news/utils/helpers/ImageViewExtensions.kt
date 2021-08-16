@@ -5,6 +5,11 @@ import androidx.annotation.DrawableRes
 import com.bumptech.glide.Glide
 
 
+/**
+ * Glide url
+ *
+ * @param url
+ */
 fun ImageView.glideUrl(url : String) {
 	Glide.with(this.context)
 		.load(url)
@@ -12,6 +17,12 @@ fun ImageView.glideUrl(url : String) {
 }
 
 
+/**
+ * Glide url
+ *
+ * @param url
+ * @param placeholder
+ */
 fun ImageView.glideUrl(
 	url : String,
 	@DrawableRes placeholder : Int,
@@ -23,6 +34,11 @@ fun ImageView.glideUrl(
 }
 
 
+/**
+ * Glide drawable res
+ *
+ * @param id
+ */
 fun ImageView.glideDrawableRes(@DrawableRes id : Int) {
 	Glide.with(this.context)
 		.load(id)

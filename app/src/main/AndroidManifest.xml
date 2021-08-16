@@ -6,14 +6,16 @@
 
     <application
         android:name=".MrRightApp"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MrRightNews">
 
-        <activity android:name=".ui.splash.SplashActivity">
+        <activity
+            android:name=".presentation.splash.SplashActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,8 +23,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.main.MainActivity" />
-        <activity android:name=".ui.signing.SigningActivity" />
+        <activity android:name=".presentation.main.MainActivity" />
+
+        <activity android:name=".presentation.signing.SigningActivity" />
     </application>
 
 </manifest>

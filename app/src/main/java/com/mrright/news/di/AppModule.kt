@@ -25,6 +25,7 @@ object AppModule {
 	@Singleton
 	fun provideApiKey() : String = BuildConfig.API_KEY
 
+
 	@Provides
 	@Singleton
 	fun provideContext(application : Application) : Context = application.applicationContext

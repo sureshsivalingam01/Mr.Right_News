@@ -4,15 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:visibility="invisible"
-    tools:context=".ui.main.profile.ProfileFragment">
+    android:visibility="visible"
+    android:isScrollContainer="true"
+    tools:context=".presentation.main.profile.ProfileFragment">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/imgProfile"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_marginTop="24dp"
-        android:src="@drawable/ic_launcher_background"
+        android:foreground="@drawable/profile_pic_border"
+        android:src="@drawable/user"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Google"
+        android:text="@string/name"
         app:layout_constraintEnd_toEndOf="@+id/imgProfile"
         app:layout_constraintStart_toStartOf="@+id/imgProfile"
         app:layout_constraintTop_toBottomOf="@+id/imgProfile" />
@@ -32,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="abc@xyz.com"
+        android:text="@string/email"
         app:layout_constraintEnd_toEndOf="@+id/imgProfile"
         app:layout_constraintStart_toStartOf="@+id/imgProfile"
         app:layout_constraintTop_toBottomOf="@+id/txtName" />
@@ -41,8 +44,8 @@
         android:id="@+id/rvMenus"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtEmail"

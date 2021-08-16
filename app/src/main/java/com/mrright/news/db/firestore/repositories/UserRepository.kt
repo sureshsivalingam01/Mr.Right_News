@@ -9,7 +9,7 @@ import com.mrright.news.db.Source
 import com.mrright.news.db.firestore.dto.UserDTO
 import com.mrright.news.di.UserCollection
 import com.mrright.news.models.User
-import com.mrright.news.ui.main.profile.UserState
+import com.mrright.news.presentation.main.profile.UserState
 import com.mrright.news.utils.constants.State
 import com.mrright.news.utils.exceptions.NoUserException
 import com.mrright.news.utils.helpers.errorLog
@@ -70,6 +70,7 @@ class UserRepoImpl @Inject constructor(
 			errorLog("getAccountDetails | Exception", e)
 			emit(Resource.Failure(e))
 		}
+
 	}
 
 
@@ -90,6 +91,7 @@ class UserRepoImpl @Inject constructor(
 			userCollection.document(auth.currentUser?.uid!!)
 				.update(map)
 				.await()
+
 			infoLog("updateUser | Success | Updated")
 			emit(Source.Success)
 		}
@@ -161,7 +163,6 @@ class UserRepoImpl @Inject constructor(
 					throw Exception("No User Exists")
 				}
 			}
-
 		}
 		catch (e : Exception) {
 			errorLog("checkUserExist | Failed | ${e.message}")

@@ -10,7 +10,7 @@ plugins {
 android {
 
     compileSdkVersion 30
-    //buildToolsVersion "31.0.0"
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.mrright.news"
@@ -61,11 +61,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation "com.google.firebase:firebase-common-ktx"
     implementation 'com.google.firebase:firebase-firestore-ktx'
-    implementation 'com.google.firebase:firebase-functions-ktx'
-    implementation 'com.google.firebase:firebase-messaging-ktx'
+    /*implementation 'com.google.firebase:firebase-functions-ktx'
+    implementation 'com.google.firebase:firebase-messaging-ktx'*/
     implementation 'com.google.firebase:firebase-storage-ktx'
 
-implementation 'com.firebaseui:firebase-ui-firestore:7.2.0'
+    implementation 'com.firebaseui:firebase-ui-firestore:7.2.0'
 
     // Also declare the dependency for the Google Play services library and specify its version
     implementation "com.google.android.gms:play-services-auth:19.2.0"
@@ -86,9 +86,9 @@ implementation 'com.firebaseui:firebase-ui-firestore:7.2.0'
     def fragment_version = "1.4.0-alpha05"
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
 
-    //Collection
-    def collection_version = "1.1.0"
-    implementation "androidx.collection:collection-ktx:$collection_version"
+    /* //Collection
+     def collection_version = "1.1.0"
+     implementation "androidx.collection:collection-ktx:$collection_version"*/
 
     //Lifecycle
     def lifecycle_version = "2.3.1"
@@ -107,14 +107,14 @@ implementation 'com.firebaseui:firebase-ui-firestore:7.2.0'
     implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
 
 
-    //Paging
-    def paging_version = "3.0.1"
-    implementation "androidx.paging:paging-common-ktx:$paging_version"
-    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
+    /* //Paging
+     def paging_version = "3.0.1"
+     implementation "androidx.paging:paging-common-ktx:$paging_version"
+     implementation "androidx.paging:paging-runtime-ktx:$paging_version"*/
 
-    //Preference
-    def preference_version = "1.1.1"
-    implementation "androidx.preference:preference-ktx:$preference_version"
+    /* //Preference
+     def preference_version = "1.1.1"
+     implementation "androidx.preference:preference-ktx:$preference_version"*/
 
     //Room DB
     def room_version = "2.3.0"
@@ -155,12 +155,11 @@ implementation 'com.firebaseui:firebase-ui-firestore:7.2.0'
     def hilt_nav_version = "1.0.0"
     implementation "androidx.hilt:hilt-navigation-fragment:$hilt_nav_version"
 
+    //Coroutines
     def coroutines_version = "1.5.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutines_version"
-
-
 
     //Glide
     def glide_version = "4.9.0"
@@ -174,4 +173,5 @@ implementation 'com.firebaseui:firebase-ui-firestore:7.2.0'
     androidTestImplementation "androidx.test.ext:junit:$ext_junit_version"
     def espresso_version = "3.4.0"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+
 }

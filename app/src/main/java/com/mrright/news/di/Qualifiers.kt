@@ -11,6 +11,7 @@ annotation class BaseUrl
 @Retention(AnnotationRetention.BINARY)
 annotation class ApiKey
 
+
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class UserCollection

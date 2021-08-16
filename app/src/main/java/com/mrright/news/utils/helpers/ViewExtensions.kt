@@ -18,6 +18,13 @@ fun View.gone() {
 	this.visibility = View.GONE
 }
 
+/**
+ * Short snackbar
+ *
+ * @param text
+ * @param actionText
+ * @param action
+ */
 fun View.shortSnack(
 	text : String,
 	actionText : String? = null,
@@ -29,7 +36,11 @@ fun View.shortSnack(
 }
 
 
-//Toolbar Extension
+/**
+ * Set string resource title
+ *
+ * @param id
+ */
 fun Toolbar.setStringResTitle(@StringRes id : Int) {
 	this.title = this.context.getString(id)
 }

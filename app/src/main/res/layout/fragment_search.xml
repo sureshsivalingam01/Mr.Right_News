@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.search.SearchFragment">
+    tools:context=".presentation.main.search.SearchFragment">
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/search"
@@ -18,6 +18,7 @@
         android:id="@+id/rvArticles"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        tools:listitem="@layout/rv_article"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

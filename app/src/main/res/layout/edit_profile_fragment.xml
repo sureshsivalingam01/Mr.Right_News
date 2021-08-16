@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.edit_profile.EditProfileFragment">
+    android:visibility="invisible"
+    tools:context=".presentation.main.edit_profile.EditProfileFragment">
 
 
     <EditText
@@ -13,8 +14,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:ems="10"
+        android:hint="@string/name"
+        android:importantForAutofill="no"
         android:inputType="textPersonName"
-        android:hint="Name"
         app:layout_constraintBottom_toTopOf="@+id/etPhoneNo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -25,8 +27,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:ems="10"
+        android:hint="@string/mobile_number"
+        android:importantForAutofill="no"
         android:inputType="phone"
-        android:hint="Mobile Number"
         app:layout_constraintBottom_toTopOf="@+id/btnUpdate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -36,18 +39,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        android:text="Update"
+        android:text="@string/update"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/etPhoneNo"
         app:layout_constraintStart_toStartOf="@+id/etPhoneNo" />
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/imgProfilePic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_marginBottom="8dp"
+        android:contentDescription="@string/app_name"
+        android:foreground="@drawable/profile_pic_border"
         app:layout_constraintBottom_toTopOf="@+id/etName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:src="@tools:sample/avatars" />
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
+        tools:src="@drawable/user" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

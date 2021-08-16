@@ -33,12 +33,7 @@ object RetrofitModule {
 	fun provideOkHttpClient() : OkHttpClient {
 		return OkHttpClient.Builder()
 			.addInterceptor(HttpLoggingInterceptor().apply {
-				level = if (BuildConfig.DEBUG) {
-					Level.BODY
-				}
-				else {
-					Level.NONE
-				}
+				level = if (BuildConfig.DEBUG) Level.BODY else Level.NONE
 			})
 			.apply {
 				readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
@@ -55,13 +50,13 @@ object RetrofitModule {
 		@BaseUrl baseUrl : String,
 		gsonConverterFactory : GsonConverterFactory,
 		okHttpClient : OkHttpClient,
-	) : Retrofit {
-		return Retrofit.Builder()
-			.addConverterFactory(gsonConverterFactory)
-			.baseUrl(baseUrl)
-			.client(okHttpClient)
-			.build()
-	}
+	) : Retrofit = Retrofit.Builder()
+		.apply {
+			addConverterFactory(gsonConverterFactory)
+			baseUrl(baseUrl)
+			client(okHttpClient)
+		}
+		.build()
 
 
 	@Provides

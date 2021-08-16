@@ -7,15 +7,14 @@ import com.mrright.news.databinding.ProgressDialogBinding
 
 class ProgressDialog {
 
-
 	private lateinit var bindDialog : ProgressDialogBinding
 
-
-	fun setMsg(msg : String) {
-		bindDialog.textReason.text = msg
-	}
-
-
+	/**
+	 * Instance
+	 *
+	 * @param activity
+	 * @return [AlertDialog]
+	 */
 	fun instance(activity : Activity) : AlertDialog {
 		return AlertDialog.Builder(activity)
 			.apply {
@@ -25,5 +24,17 @@ class ProgressDialog {
 			}
 			.create()
 	}
+
+
+
+	/**
+	 * Set msg
+	 *
+	 * @param msg
+	 */
+	fun setMsg(msg : String) {
+		bindDialog.textReason.text = msg
+	}
+
 
 }

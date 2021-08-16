@@ -3,10 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.liked_articles.LikedArticleFragment">
+    tools:context=".presentation.main.liked_articles.LikedArticleFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvLikedArticles"
+        tools:listitem="@layout/rv_article"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </FrameLayout>

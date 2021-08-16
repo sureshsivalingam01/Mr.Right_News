@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.mrright.news.ui.main.home.HomeFragment"
+        android:name="com.mrright.news.presentation.main.home.HomeFragment"
         android:label="@string/home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/navigation_search"
-        android:name="com.mrright.news.ui.main.search.SearchFragment"
+        android:name="com.mrright.news.presentation.main.search.SearchFragment"
         android:label="@string/search"
         tools:layout="@layout/fragment_search" >
         <action
@@ -27,7 +27,7 @@
 
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.mrright.news.ui.main.profile.ProfileFragment"
+        android:name="com.mrright.news.presentation.main.profile.ProfileFragment"
         android:label="@string/profile"
         tools:layout="@layout/fragment_profile" >
         <action
@@ -39,7 +39,7 @@
     </fragment>
     <fragment
         android:id="@+id/articleFragment"
-        android:name="com.mrright.news.ui.main.article.ArticleFragment"
+        android:name="com.mrright.news.presentation.main.article.ArticleFragment"
         android:label="article_fragment"
         tools:layout="@layout/article_fragment" >
         <argument
@@ -49,12 +49,12 @@
     </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
-        android:name="com.mrright.news.ui.main.edit_profile.EditProfileFragment"
+        android:name="com.mrright.news.presentation.main.edit_profile.EditProfileFragment"
         android:label="edit_profile_fragment"
         tools:layout="@layout/edit_profile_fragment" />
     <fragment
         android:id="@+id/likedArticleFragment"
-        android:name="com.mrright.news.ui.main.liked_articles.LikedArticleFragment"
+        android:name="com.mrright.news.presentation.main.liked_articles.LikedArticleFragment"
         android:label="liked_article_fragment"
         tools:layout="@layout/liked_article_fragment" >
         <action

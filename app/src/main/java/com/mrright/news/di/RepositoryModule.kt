@@ -18,20 +18,21 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @InstallIn(ViewModelComponent::class)
 object RepositoryModule {
 
+
 	@Provides
 	@ViewModelScoped
 	fun provideNewsRepo(
 		@ApiKey apiKey : String,
 		newsService : NewsService,
-	) : NewsRepository {
-		return NewsRepoImpl(apiKey, newsService)
-	}
+	) : NewsRepository = NewsRepoImpl(apiKey, newsService)
+
 
 	@Provides
 	@ViewModelScoped
 	fun provideAuthRepo(
 		auth : FirebaseAuth,
 	) : AuthRepository = AuthRepoImpl(auth)
+
 
 	@Provides
 	@ViewModelScoped
@@ -40,6 +41,7 @@ object RepositoryModule {
 		storage : FirebaseStorage,
 		@UserCollection userCollection : CollectionReference,
 	) : UserRepository = UserRepoImpl(auth, storage, userCollection)
+
 
 	@Provides
 	@ViewModelScoped

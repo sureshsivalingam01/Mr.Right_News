@@ -5,6 +5,14 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 
 
+/**
+ * Open activity
+ *
+ * @param T
+ * @param activity
+ * @param extras
+ * @receiver
+ */
 inline fun <T> Fragment.openActivity(
 	activity : Class<T>,
 	extras : Bundle.() -> Unit = {},

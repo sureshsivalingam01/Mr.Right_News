@@ -28,7 +28,7 @@
             android:layout_marginBottom="8dp"
             android:ellipsize="end"
             android:maxLines="4"
-            android:text="Title"
+            android:text="@string/title"
             app:layout_constraintBottom_toTopOf="@+id/txtDate"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/imgArticle"
@@ -38,7 +38,7 @@
             android:id="@+id/txtDate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Date"
+            android:text="@string/date"
             app:layout_constraintBottom_toBottomOf="@+id/imgArticle"
             app:layout_constraintEnd_toEndOf="@+id/txtTitle"
             app:layout_constraintStart_toStartOf="@+id/txtTitle" />
