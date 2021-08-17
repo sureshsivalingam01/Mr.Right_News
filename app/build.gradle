@@ -27,11 +27,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "BASE_URL", "\"https://newsapi.org/v2/\""
-            buildConfigField "String", "API_KEY", "\"aca73ef668314c26b75c9d5c29cbe545\""
+            buildConfigField "String", "API_KEY", "\"YOUR_API_KEY\""
         }
         debug {
             buildConfigField "String", "BASE_URL", "\"https://newsapi.org/v2/\""
-            buildConfigField "String", "API_KEY", "\"aca73ef668314c26b75c9d5c29cbe545\""
+            buildConfigField "String", "API_KEY", "\"YOUR_API_KEY\""
         }
     }
     compileOptions {
