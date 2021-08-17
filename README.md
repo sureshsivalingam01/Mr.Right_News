@@ -19,3 +19,8 @@ NEWSAPI : https://newsapi.org/
 
 
 I have use many Extension functions, Scope functions to reduce boilerplate codes.
+
+
+Add this project into your firebase app to connect to a database and add the google_service.json.
+
+Provide NEWS_API_KEY from https://newsapi.org/ in the gradle.
