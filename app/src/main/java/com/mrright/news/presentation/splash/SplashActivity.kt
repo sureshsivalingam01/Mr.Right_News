@@ -43,7 +43,6 @@ class SplashActivity : AppCompatActivity() {
 
 	private fun collectUserState() {
 		splashVM.isUserLoggedIn.observe(this@SplashActivity) {
-
 			when (it) {
 				is UserState.Error -> {
 					bind.txtMsg.text = it.msg

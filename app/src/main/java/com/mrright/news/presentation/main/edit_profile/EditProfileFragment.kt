@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -27,6 +28,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+
 
 @AndroidEntryPoint
 class EditProfileFragment : Fragment() {
@@ -134,7 +136,6 @@ class EditProfileFragment : Fragment() {
 		}
 
 		bind.btnUpdate.setOnClickListener {
-
 			lifecycleScope.launch(Dispatchers.Main) {
 				viewModel.updateDetails()
 			}
@@ -146,8 +147,12 @@ class EditProfileFragment : Fragment() {
 			when (it) {
 				is UserState.Error -> Unit
 				is UserState.Success -> {
-					if (!bind.root.isVisible) {
-						bind.root.visible()
+					if (!bind.cardProfile.isVisible) {
+						val animate =
+							AnimationUtils.loadAnimation(requireContext(), R.anim.slide_in_top)
+						animate.duration = 600
+						bind.cardProfile.startAnimation(animate)
+						bind.cardProfile.visible()
 					}
 					bind.etName.setText(it.user.name)
 					bind.etPhoneNo.setText(it.user.phoneNo)
@@ -164,6 +169,7 @@ class EditProfileFragment : Fragment() {
 		_bind = null
 		dialog = null
 	}
+
 
 }
 

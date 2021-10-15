@@ -3,6 +3,7 @@ package com.mrright.news.presentation.main.article
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mrright.news.R
 import com.mrright.news.db.Resource
 import com.mrright.news.db.Source
 import com.mrright.news.db.firestore.repositories.ArticleRepository
@@ -18,7 +19,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,7 +46,6 @@ class ArticleViewModel @Inject constructor(
 
 					when (it) {
 						is Resource.Failure -> {
-							//msgChannel.send(MessageEvent.Toast(result.ex.message))
 							_likedArticle.value = ArticleFabState.UnLiked
 						}
 						is Resource.Success -> {
@@ -66,24 +65,21 @@ class ArticleViewModel @Inject constructor(
 
 
 	fun addToLiked() {
-		viewModelScope.launch(Dispatchers.Main) {
-			articleLiveData.value?.let {
+        viewModelScope.launch(Dispatchers.IO) {
+            articleLiveData.value?.let { article ->
 
-				val result = withContext(Dispatchers.IO) {
-					articleRepository.addArticle(it)
-				}
-
-				result.collect {
-					when (it) {
-						is Resource.Failure -> _likedArticle.value = ArticleFabState.UnLiked
-						is Resource.Success -> {
-							msgChannel.send(MessageEvent.Toast("Liked"))
-							articleId = it.value
-							_likedArticle.value = ArticleFabState.Liked
-						}
-					}
-				}
-			}
+                articleRepository.addArticle(article)
+                    .collect {
+                        when (it) {
+                            is Resource.Failure -> _likedArticle.value = ArticleFabState.UnLiked
+                            is Resource.Success -> {
+                                msgChannel.send(MessageEvent.ToastStringRes(R.string.liked))
+                                articleId = it.value
+                                _likedArticle.value = ArticleFabState.Liked
+                            }
+                        }
+                    }
+            }
 		}
 	}
 
@@ -94,9 +90,9 @@ class ArticleViewModel @Inject constructor(
 				.collect {
 					when (it) {
 						is Source.Success -> {
-							msgChannel.send(MessageEvent.Toast("UnLiked"))
-							_likedArticle.value = ArticleFabState.UnLiked
-						}
+                            msgChannel.send(MessageEvent.ToastStringRes(R.string.un_liked))
+                            _likedArticle.value = ArticleFabState.UnLiked
+                        }
 						is Source.Failure -> {
 							msgChannel.send(MessageEvent.Toast(it.ex.handle()))
 							_likedArticle.value = ArticleFabState.Liked

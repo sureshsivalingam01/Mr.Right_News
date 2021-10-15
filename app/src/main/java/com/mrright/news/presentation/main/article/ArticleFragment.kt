@@ -66,9 +66,13 @@ class ArticleFragment : Fragment() {
 		lifecycleScope.launchWhenStarted {
 			viewModel.msgFlow.collect {
 				when (it) {
-					is MessageEvent.Toast -> requireContext().toast(it.msg)
-					else -> Unit
-				}
+                    is MessageEvent.Toast -> requireContext().toast(it.msg, it.duration)
+                    is MessageEvent.ToastStringRes -> requireContext().toast(
+                        it.stringId,
+                        it.duration
+                    )
+                    else -> Unit
+                }
 			}
 		}
 	}
@@ -77,22 +81,21 @@ class ArticleFragment : Fragment() {
 		lifecycleScope.launchWhenCreated {
 			viewModel.likedArticle.collect {
 				with(bind) {
-					when (it) {
-						ArticleFabState.Liked -> {
-							if (!fabLike.isVisible) {
-								fabLike.visible()
-							}
-							fabLike.setImageResource(R.drawable.heart_24_like)
-						}
-						ArticleFabState.UnLiked -> {
-							if (!fabLike.isVisible) {
-								fabLike.visible()
-							}
-							fabLike.setImageResource(R.drawable.heart_24_unlike)
-						}
-						else -> fabLike.gone()
-					}
-				}
+
+                    if (!fabLike.isVisible) {
+                        fabLike.visible()
+                    }
+
+                    when (it) {
+                        ArticleFabState.Liked -> {
+                            fabLike.setImageResource(R.drawable.heart_24_like)
+                        }
+                        ArticleFabState.UnLiked -> {
+                            fabLike.setImageResource(R.drawable.heart_24_unlike)
+                        }
+                        else -> fabLike.gone()
+                    }
+                }
 
 			}
 		}
@@ -119,11 +122,10 @@ class ArticleFragment : Fragment() {
 	}
 
 	private fun getArgs() {
-		val article = args.article
-		article?.let {
-			viewModel.setArticle(it)
-		}
-	}
+        args.article?.let {
+            viewModel.setArticle(it)
+        }
+    }
 
 	override fun onDestroyView() {
 		super.onDestroyView()

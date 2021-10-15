@@ -3,21 +3,26 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../.gradle/caches/transforms-2/files-2.1/1e2e6c97a7b390172878636c52e3493c/jetified-play-services-base-17.5.0/res/drawable/common_google_signin_btn_icon_dark.xml" value="0.20625" />
+        <entry key="..\:/Users/sures/Downloads/AndroidStudioProjects/Mr.Right_News/app/src/main/res/layout/activity_signing.xml" value="0.2" />
+        <entry key="..\:/Users/sures/Downloads/AndroidStudioProjects/Mr.Right_News/app/src/main/res/layout/activity_splash.xml" value="0.2" />
+        <entry key="app/src/main/res/drawable/button_primary.xml" value="0.20625" />
+        <entry key="app/src/main/res/drawable/ic_baseline_local_fire_department_24.xml" value="0.10052083333333334" />
         <entry key="app/src/main/res/drawable/profile_pic_border.xml" value="0.20625" />
         <entry key="app/src/main/res/layout-v23/fragment_profile.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.19010416666666666" />
-        <entry key="app/src/main/res/layout/activity_signing.xml" value="0.19010416666666666" />
-        <entry key="app/src/main/res/layout/activity_splash.xml" value="0.19010416666666666" />
+        <entry key="app/src/main/res/layout/activity_signing.xml" value="0.2" />
+        <entry key="app/src/main/res/layout/activity_splash.xml" value="0.18" />
         <entry key="app/src/main/res/layout/article_fragment.xml" value="0.19010416666666666" />
         <entry key="app/src/main/res/layout/dialog_sign_in.xml" value="0.19010416666666666" />
         <entry key="app/src/main/res/layout/dialog_sign_up.xml" value="0.19010416666666666" />
-        <entry key="app/src/main/res/layout/edit_profile_fragment.xml" value="0.19010416666666666" />
+        <entry key="app/src/main/res/layout/edit_profile_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.2" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_search.xml" value="0.19010416666666666" />
         <entry key="app/src/main/res/layout/liked_article_fragment.xml" value="0.19010416666666666" />
         <entry key="app/src/main/res/layout/progress_dialog.xml" value="0.18717948717948718" />
-        <entry key="app/src/main/res/layout/rv_article.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/rv_article.xml" value="0.19010416666666666" />
         <entry key="app/src/main/res/layout/rv_profile_menus.xml" value="0.19010416666666666" />
       </map>
     </option>

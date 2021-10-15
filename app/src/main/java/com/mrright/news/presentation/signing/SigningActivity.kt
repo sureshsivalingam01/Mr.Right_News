@@ -99,17 +99,18 @@ class SigningActivity : AppCompatActivity() {
 					when (it) {
 						SigningUIState.SignIn -> {
 
-							btnSignIn.visible()
-							btnSignUp.gone()
-							txtToggle.text = getString(R.string.new_user_register)
-
-						}
+                            btnSignIn.visible()
+                            btnSignUp.gone()
+                            txtToggle.text = getString(R.string.sign_up)
+                            txtFront.text = getString(R.string.new_user)
+                        }
 						SigningUIState.SignUp -> {
 
-							btnSignIn.gone()
-							btnSignUp.visible()
-							txtToggle.text = getString(R.string.old_user_sign_in)
-						}
+                            btnSignIn.gone()
+                            btnSignUp.visible()
+                            txtToggle.text = getString(R.string.sign_in)
+                            txtFront.text = getString(R.string.old_user)
+                        }
 					}
 				}
 			}

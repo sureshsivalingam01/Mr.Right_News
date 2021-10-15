@@ -10,6 +10,8 @@
         android:id="@+id/search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:outlineAmbientShadowColor="@color/orange_dark"
+        android:outlineSpotShadowColor="@color/orange"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -18,11 +20,11 @@
         android:id="@+id/rvArticles"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        tools:listitem="@layout/rv_article"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search" />
+        app:layout_constraintTop_toBottomOf="@+id/search"
+        tools:listitem="@layout/rv_article" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

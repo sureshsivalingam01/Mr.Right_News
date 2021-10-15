@@ -3,15 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
+    android:background="@color/orange"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".presentation.signing.SigningActivity">
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/cardSign"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:lottie_rawRes="@raw/google_logo" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardSign"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:cardElevation="50dp"
+        style="@style/MyCardView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -21,15 +34,17 @@
             android:layout_height="wrap_content"
             android:paddingVertical="30dp">
 
-
             <Button
                 android:id="@+id/btnSignIn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                android:drawableStart="@drawable/googleg_standard_color_18"
+                android:background="@color/google_blue"
+                android:drawableStart="@drawable/common_google_signin_btn_icon_dark"
                 android:drawablePadding="6dp"
-                android:text="@string/google_sign_in"
+                android:padding="8dp"
+                android:text="@string/sign_in_with_google"
+                android:textColor="@color/white"
                 app:layout_constraintBottom_toTopOf="@+id/txt_toggle"
                 app:layout_constraintEnd_toStartOf="@+id/btnSignUp"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -42,9 +57,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                android:drawableStart="@drawable/googleg_standard_color_18"
+                android:background="@color/google_blue"
+                android:drawableStart="@drawable/common_google_signin_btn_icon_dark"
                 android:drawablePadding="6dp"
-                android:text="@string/google_sign_up"
+                android:padding="8dp"
+                android:text="@string/sign_up_with_google"
+                android:textColor="@color/white"
                 android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/txt_toggle"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -52,16 +70,31 @@
                 app:layout_constraintStart_toEndOf="@+id/btnSignIn"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <TextView
+                android:id="@+id/txtFront"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/new_user"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/txt_toggle"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/txt_toggle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/new_user_register"
+                android:textStyle="bold|italic"
+                android:textColor="@color/orange"
+                android:text="@string/sign_in"
                 android:textAlignment="center"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/txtFront" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

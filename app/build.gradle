@@ -27,11 +27,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "BASE_URL", "\"https://newsapi.org/v2/\""
-            buildConfigField "String", "API_KEY", "\"YOUR_API_KEY\""
+            buildConfigField "String", "API_KEY", "\"aca73ef668314c26b75c9d5c29cbe545\""
         }
         debug {
             buildConfigField "String", "BASE_URL", "\"https://newsapi.org/v2/\""
-            buildConfigField "String", "API_KEY", "\"YOUR_API_KEY\""
+            buildConfigField "String", "API_KEY", "\"aca73ef668314c26b75c9d5c29cbe545\""
         }
     }
     compileOptions {
@@ -165,6 +165,9 @@ dependencies {
     def glide_version = "4.9.0"
     implementation "com.github.bumptech.glide:glide:$glide_version"
     kapt "com.github.bumptech.glide:compiler:$glide_version"
+
+    def lottieVersion = "3.4.0"
+    implementation "com.airbnb.android:lottie:$lottieVersion"
 
     //Testing
     def junit_version = "4.13.2"

@@ -50,4 +50,5 @@ object RepositoryModule {
 		@UserCollection userCollection : CollectionReference,
 	) : ArticleRepository = ArticleRepoImpl(auth, userCollection)
 
+
 }

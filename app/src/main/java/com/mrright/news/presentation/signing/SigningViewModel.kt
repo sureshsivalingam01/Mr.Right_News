@@ -59,17 +59,18 @@ class SigningViewModel @Inject constructor(
 
 		viewModelScope.launch(Dispatchers.Main) {
 
-			_authSigning.value = SigningState.LoadingStringRes(R.string.loading)
-			delay(500L)
+            _authSigning.value =
+                SigningState.LoadingStringRes(if (sign == SIGN.IN) R.string.signing_in else R.string.signing_up)
+            delay(500L)
 
-			val result = withContext(IO) {
-				authRepository.getTokenId(task)
-			}
+            val result = withContext(IO) {
+                authRepository.getTokenId(task)
+            }
 
-			result.collect {
-				when (it) {
-					is Resource.Failure -> {
-						_authSigning.value = SigningState.Error
+            result.collect {
+                when (it) {
+                    is Resource.Failure -> {
+                        _authSigning.value = SigningState.Error
 						msgChannel.send(MessageEvent.Toast(it.ex.handle()))
 					}
 					is Resource.Success -> {
@@ -122,7 +123,6 @@ class SigningViewModel @Inject constructor(
 		sign : SIGN,
 	) {
 
-		_authSigning.value = SigningState.LoadingStringRes(R.string.getting_details)
 		delay(500L)
 
 		val result = withContext(IO) {
@@ -153,7 +153,6 @@ class SigningViewModel @Inject constructor(
 
 	private suspend fun createUser(firebaseUser : FirebaseUser) {
 
-		_authSigning.value = SigningState.LoadingStringRes(R.string.creating_user)
 		delay(500L)
 
 		val user = User(
